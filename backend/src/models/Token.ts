@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
+import { HydratedDocument } from 'mongoose'
 import { Document, model, Schema } from 'mongoose'
-import MongooseDelete from 'mongoose-delete'
+import MongooseDelete, { SoftDeleteModel } from 'mongoose-delete'
 
 export const TokenScope = {
   All: 'all',
@@ -97,6 +98,6 @@ TokenSchema.methods.compareToken = function compareToken(candidateToken: string)
 
 TokenSchema.plugin(MongooseDelete, { overrideMethods: 'all' })
 
-const TokenModel = model<TokenInterface>('v2_Token', TokenSchema)
+const TokenModel = model<TokenInterface, SoftDeleteModel<HydratedDocument<TokenInterface>>>('v2_Token', TokenSchema)
 
 export default TokenModel

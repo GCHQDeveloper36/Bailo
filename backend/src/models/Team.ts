@@ -1,5 +1,6 @@
+import { HydratedDocument } from 'mongoose'
 import { Document, model, Schema } from 'mongoose'
-import MongooseDelete from 'mongoose-delete'
+import MongooseDelete, { SoftDeleteModel } from 'mongoose-delete'
 
 // This interface stores information about the properties on the base object.
 // It should be used for plain object representations, e.g. for sending to the
@@ -36,6 +37,6 @@ const TeamSchema = new Schema<TeamInterface>(
 
 TeamSchema.plugin(MongooseDelete, { overrideMethods: 'all', deletedBy: true, deletedByType: Schema.Types.ObjectId })
 
-const TeamModel = model<TeamInterface>('v2_Team', TeamSchema)
+const TeamModel = model<TeamInterface, SoftDeleteModel<HydratedDocument<TeamInterface>>>('v2_Team', TeamSchema)
 
 export default TeamModel

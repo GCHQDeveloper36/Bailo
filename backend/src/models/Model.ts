@@ -1,5 +1,5 @@
 import { Document, model, Schema } from 'mongoose'
-import MongooseDelete from 'mongoose-delete'
+import MongooseDelete, { SoftDeleteDocument, SoftDeleteModel } from 'mongoose-delete'
 
 export const EntryVisibility = {
   Private: 'private',
@@ -41,7 +41,7 @@ export interface ModelCardInterface {
 // This interface stores information about the properties on the base object.
 // It should be used for plain object representations, e.g. for sending to the
 // client.
-export interface ModelInterface {
+export interface ModelInterface extends SoftDeleteDocument {
   id: string
 
   name: string
@@ -106,6 +106,9 @@ const ModelSchema = new Schema<ModelInterface>(
 ModelSchema.plugin(MongooseDelete, { overrideMethods: 'all', deletedBy: true, deletedByType: Schema.Types.ObjectId })
 ModelSchema.index({ '$**': 'text' }, { weights: { name: 10, description: 5 } })
 
-const ModelModel = model<ModelInterface>('v2_Model', ModelSchema)
+const ModelModel: SoftDeleteModel<ModelInterface> = model<ModelInterface, SoftDeleteModel<ModelInterface>>(
+  'v2_Model',
+  ModelSchema,
+)
 
 export default ModelModel

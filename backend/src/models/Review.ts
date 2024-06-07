@@ -1,5 +1,5 @@
-import { Document, model, Schema } from 'mongoose'
-import MongooseDelete from 'mongoose-delete'
+import { Document, HydratedDocument, model, Schema } from 'mongoose'
+import MongooseDelete, { SoftDeleteModel } from 'mongoose-delete'
 
 import { ReviewKind, ReviewKindKeys } from '../types/enums.js'
 
@@ -98,6 +98,9 @@ ReviewSchema.plugin(MongooseDelete, {
   deletedByType: String,
 })
 
-const ReviewModel = model<ReviewInterface>('v2_Review', ReviewSchema)
+const ReviewModel = model<ReviewInterface, SoftDeleteModel<HydratedDocument<ReviewInterface>>>(
+  'v2_Review',
+  ReviewSchema,
+)
 
 export default ReviewModel

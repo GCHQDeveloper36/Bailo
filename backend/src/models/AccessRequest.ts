@@ -1,5 +1,5 @@
-import { Document, model, Schema } from 'mongoose'
-import MongooseDelete from 'mongoose-delete'
+import { Document, HydratedDocument, model, Schema } from 'mongoose'
+import MongooseDelete, { SoftDeleteModel } from 'mongoose-delete'
 
 import { ReviewComment } from './Release.js'
 
@@ -69,6 +69,9 @@ AccessRequestSchema.plugin(MongooseDelete, {
   deletedByType: String,
 })
 
-const AccessRequestModel = model<AccessRequestInterface>('v2_Access_Request', AccessRequestSchema)
+const AccessRequestModel = model<AccessRequestInterface, SoftDeleteModel<HydratedDocument<AccessRequestInterface>>>(
+  'v2_Access_Request',
+  AccessRequestSchema,
+)
 
 export default AccessRequestModel

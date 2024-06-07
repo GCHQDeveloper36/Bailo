@@ -1,5 +1,5 @@
-import { Document, model, Schema } from 'mongoose'
-import MongooseDelete from 'mongoose-delete'
+import { Document, HydratedDocument, model, Schema } from 'mongoose'
+import MongooseDelete, { SoftDeleteModel } from 'mongoose-delete'
 
 export const WebhookEvent = {
   CreateRelease: 'createRelease',
@@ -46,6 +46,9 @@ WebhookSchema.plugin(MongooseDelete, {
   deletedByType: Schema.Types.ObjectId,
 })
 
-const WebhookModel = model<WebhookInterface>('v2_Webhook', WebhookSchema)
+const WebhookModel = model<WebhookInterface, SoftDeleteModel<HydratedDocument<WebhookInterface>>>(
+  'v2_Webhook',
+  WebhookSchema,
+)
 
 export default WebhookModel

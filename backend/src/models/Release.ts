@@ -1,10 +1,10 @@
 import { Document, model, Schema } from 'mongoose'
-import MongooseDelete from 'mongoose-delete'
+import MongooseDelete, { SoftDeleteDocument, SoftDeleteModel } from 'mongoose-delete'
 
 // This interface stores information about the properties on the base object.
 // It should be used for plain object representations, e.g. for sending to the
 // client.
-export interface ReleaseInterface {
+export interface ReleaseInterface extends SoftDeleteDocument {
   modelId: string
   modelCardVersion: number
 
@@ -82,6 +82,10 @@ const ReleaseSchema = new Schema<ReleaseInterface>(
 ReleaseSchema.plugin(MongooseDelete, { overrideMethods: 'all', deletedBy: true, deletedByType: Schema.Types.ObjectId })
 ReleaseSchema.index({ modelId: 1, semver: 1 }, { unique: true })
 
-const ReleaseModel = model<ReleaseInterface>('v2_Release', ReleaseSchema)
+// const ReleaseModel: SoftDeleteModel<HydratedDocument<ReleaseInterface>> = model<
+const ReleaseModel: SoftDeleteModel<ReleaseInterface> = model<ReleaseInterface, SoftDeleteModel<ReleaseInterface>>(
+  'v2_Release',
+  ReleaseSchema,
+)
 
 export default ReleaseModel
