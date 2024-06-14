@@ -115,6 +115,8 @@ module.exports = {
     secret: '',
   },
 
+  authHeaders: [{ headerKey: 'x-ssl-client-subject-dn', userField: 'dn' }],
+
   oauth: {
     provider: 'cognito',
 

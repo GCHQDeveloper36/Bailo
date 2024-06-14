@@ -9,6 +9,8 @@ export interface UserInterface {
   // should be stored in an external corporate store.
   dn: string
 
+  metadata: object
+
   // A token may restrict the actions that a user currently is permitted to
   // complete.  If a token does not exist, full access is assumed.
   token?: TokenDoc

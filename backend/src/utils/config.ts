@@ -136,6 +136,10 @@ export interface Config {
     secret: string
   }
 
+  authHeaders: { [key: string]: string }
+
+  roleMapping: { [key: string]: string }
+
   oauth: {
     provider: string
     grant: grant.GrantConfig | grant.GrantOptions

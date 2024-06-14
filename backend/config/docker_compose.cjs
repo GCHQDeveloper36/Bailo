@@ -59,4 +59,14 @@ module.exports = {
       host: 'clamd',
     },
   },
+
+  authHeaders: { 'x-client-dn': 'dn', 'x-groups': 'groups' },
+
+  //authHeaders: [{ headerKey: 'test-client', userField: 'dn' }],
+
+  connectors: {
+    authentication: {
+      kind: 'headers',
+    },
+  },
 }
