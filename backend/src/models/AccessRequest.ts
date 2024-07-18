@@ -1,10 +1,12 @@
 import { Document, model, Schema } from 'mongoose'
 import MongooseDelete from 'mongoose-delete'
 
+import { EntityObject } from '../types/types.js'
+
 export interface AccessRequestMetadata {
   overview: {
     name: string
-    entities: Array<string>
+    entities: Array<EntityObject>
 
     endDate?: string
     [x: string]: unknown
@@ -25,7 +27,7 @@ export interface AccessRequestInterface {
 
   deleted: boolean
 
-  createdBy: string
+  createdBy: EntityObject
   createdAt: Date
   updatedAt: Date
 }

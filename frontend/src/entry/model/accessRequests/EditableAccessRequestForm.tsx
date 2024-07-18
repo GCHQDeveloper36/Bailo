@@ -18,7 +18,7 @@ import UnsavedChangesContext from 'src/contexts/unsavedChangesContext'
 import EditableFormHeading from 'src/Form/EditableFormHeading'
 import JsonSchemaForm from 'src/Form/JsonSchemaForm'
 import MessageAlert from 'src/MessageAlert'
-import { AccessRequestInterface, EntityObject, EntryKind, SplitSchemaNoRender } from 'types/types'
+import { AccessRequestInterface, EntryKind, SplitSchemaNoRender } from 'types/types'
 import { entitiesIncludesCurrentUser } from 'utils/entityUtils'
 import { getErrorMessage } from 'utils/fetcher'
 import { getStepsData, getStepsFromSchema } from 'utils/formUtils'
@@ -55,7 +55,7 @@ export default function EditableAccessRequestForm({
   const [canUserEditOrDelete, actionButtonsTooltip] = useMemo(() => {
     const isUserOwner = hasRole(currentUserRoles, ['owner'])
     const entities = accessRequest.metadata.overview.entities
-    const userEntities = entities.filter((e) => e.startsWith('user:')).flatMap((e) => new EntityObject('user', e))
+    const userEntities = entities.filter((e) => e.kind == 'user')
     const isUserNamedInAccessRequest = entitiesIncludesCurrentUser(userEntities, currentUser)
     const actionButtonsTooltip = !(isUserOwner || isUserNamedInAccessRequest)
       ? 'Only model owners or additional contacts can edit/delete an Access Request'

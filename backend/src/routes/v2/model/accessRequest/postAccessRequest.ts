@@ -12,7 +12,7 @@ import { parse } from '../../../../utils/validate.js'
 const knownOverview = z.object({
   name: z.string().nonempty(),
   endDate: z.string().optional(),
-  entities: z.array(z.string()).nonempty(),
+  entities: z.array(z.object({ kind: z.string(), id: z.string() })).nonempty(),
 })
 
 const overview = z.intersection(knownOverview, z.record(z.unknown()))

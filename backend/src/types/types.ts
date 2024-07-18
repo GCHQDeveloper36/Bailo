@@ -34,3 +34,17 @@ export interface UiConfig {
     disclaimer: string
   }
 }
+
+export class EntityObject {
+  constructor(kind: string, id: string) {
+    this.kind = kind
+    this.id = id
+  }
+
+  public readonly kind: string
+  public readonly id: string
+
+  public toString = () => {
+    return `${this.kind}:${this.id}`
+  }
+}

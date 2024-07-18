@@ -12,10 +12,11 @@ import {
   SchemaInterface,
   StepNoRender,
 } from 'types/types'
+import { fromEntity } from 'utils/entityUtils'
 
 /******** V2 ********/
 
-const testEntity = 'user:user1'
+const testEntity = fromEntity('user:user1')
 const modelId = 'my-test-model'
 const accessRequestSchemaId = 'my-request-schema'
 const modelcardSchemaId = 'my-model-schema'

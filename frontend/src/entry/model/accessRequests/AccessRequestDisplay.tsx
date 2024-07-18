@@ -110,7 +110,7 @@ export default function AccessRequestDisplay({ accessRequest, hideReviewBanner =
                 <Grid container>
                   {accessRequest.metadata.overview.entities.map((entity) => (
                     <Grid item xs={3} key={entity.toString()}>
-                      <EntityDisplay entity={new EntityObject('user', entity)} />
+                      <EntityDisplay entity={entity} />
                     </Grid>
                   ))}
                 </Grid>

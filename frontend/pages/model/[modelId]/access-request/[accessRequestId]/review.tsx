@@ -15,7 +15,6 @@ import MessageAlert from 'src/MessageAlert'
 import { DecisionKeys, EntityObject } from 'types/types'
 import { EntryKind } from 'types/types'
 import { formatDateString } from 'utils/dateUtils'
-import { fromEntity } from 'utils/entityUtils'
 import { getErrorMessage } from 'utils/fetcher'
 
 export default function AccessRequestReview() {
@@ -62,7 +61,7 @@ export default function AccessRequestReview() {
     if (accessRequest) {
       return accessRequest.metadata.overview.entities.map((entity) => (
         <Grid item xs={3} key={entity.toString()}>
-          <EntityDisplay entity={fromEntity(entity)} />
+          <EntityDisplay entity={entity} />
         </Grid>
       ))
     }

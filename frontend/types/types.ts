@@ -431,7 +431,7 @@ export type UpdateEntryForm = Omit<EntryForm, 'kind' | 'collaborators'>
 export interface AccessRequestMetadata {
   overview: {
     name: string
-    entities: Array<string>
+    entities: Array<EntityObject>
     endDate?: string
     [x: string]: unknown
   }
@@ -445,7 +445,7 @@ export interface AccessRequestInterface {
   schemaId: string
   deleted: boolean
   metadata: AccessRequestMetadata
-  createdBy: string
+  createdBy: EntityObject
   createdAt: string
   updatedAt: string
 }
