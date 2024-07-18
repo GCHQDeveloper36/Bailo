@@ -9,7 +9,7 @@ import config from '../../utils/config.js'
 import { getConnectionURI } from '../../utils/database.js'
 import { fromEntity, toEntity } from '../../utils/entity.js'
 import { InternalError, NotFound } from '../../utils/error.js'
-import { BaseAuthenticationConnector, RoleKeys, UserInformation } from './Base.js'
+import { BaseAuthenticationConnector, EntityInformation, RoleKeys } from './Base.js'
 
 const OauthEntityKind = {
   User: 'user',
@@ -85,7 +85,7 @@ export class OauthAuthenticationConnector extends BaseAuthenticationConnector {
     return [toEntity(OauthEntityKind.User, user.dn)]
   }
 
-  async getUserInformation(entity: string): Promise<UserInformation> {
+  async getEntityInformation(entity: string): Promise<EntityInformation> {
     const { kind, value: dn } = fromEntity(entity)
 
     if (kind !== OauthEntityKind.User) {
@@ -99,8 +99,7 @@ export class OauthAuthenticationConnector extends BaseAuthenticationConnector {
     if (users.length === 0) {
       throw NotFound('Cannot get user information. User not found.', { entity })
     }
-    const { dn: _returnedDn, ...info } = users[0]
-    return info
+    return users[0]
   }
 
   async getEntityMembers(entity: string): Promise<string[]> {

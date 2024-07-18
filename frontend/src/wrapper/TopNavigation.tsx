@@ -25,11 +25,11 @@ import { alpha, styled, useTheme } from '@mui/material/styles'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { CSSProperties, MouseEvent, useContext, useMemo, useState } from 'react'
-import UserDisplay from 'src/common/UserDisplay'
+import EntityDisplay from 'src/common/EntityDisplay'
 import EntrySearch from 'src/wrapper/EntrySearch'
 
 import bailoLogo from '../../public/logo-horizontal-light.png'
-import { User } from '../../types/types'
+import { EntityObject, User } from '../../types/types'
 import { DRAWER_WIDTH } from '../../utils/constants'
 import ExpandableButton from '../common/ExpandableButton'
 import ThemeModeContext from '../contexts/themeModeContext'
@@ -185,7 +185,7 @@ export default function TopNavigation({ drawerOpen = false, pageTopStyling = {},
                       onClick={handleUserMenuClicked}
                       data-test='userMenuButton'
                     >
-                      <UserDisplay dn={currentUser.dn} hidePopover />
+                      <EntityDisplay entity={new EntityObject('user', currentUser.dn)} hidePopover />
                     </Button>
                     <Menu anchorEl={userMenuAnchorEl} open={actionOpen} onClose={handleMenuClose}>
                       <MenuList>

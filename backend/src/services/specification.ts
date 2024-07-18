@@ -266,7 +266,10 @@ export const webhookInterfaceSchema = z.object({
   updatedAt: z.string().openapi({ example: new Date().toISOString() }),
 })
 
-export const UserInformationSchema = z.object({
+export const EntityInformationSchema = z.object({
+  kind: z.string().openapi({ example: 'user' }),
+  dn: z.string().openapi({ example: 'CN=Joe Bloggs, O=Acme Corp, C=GB' }),
+  metadata: z.object({}).openapi({ example: '{ "birthday": "1970-01-01", "anyExtraFields": "withAnyValue" }' }),
   email: z.string().optional().openapi({ example: 'user@example.com' }),
   name: z.string().optional().openapi({ example: 'Joe Bloggs' }),
   organisation: z.string().optional().openapi({ example: 'Acme Corp' }),

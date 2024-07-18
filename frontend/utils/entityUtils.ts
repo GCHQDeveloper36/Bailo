@@ -1,5 +1,10 @@
-import { User } from 'types/types'
+import { EntityObject, User } from 'types/types'
 
-export const entitiesIncludesCurrentUser = (entities: string[], currentUser: User | undefined) => {
-  return entities.some((entity) => entity.split(':')[1] === currentUser?.dn)
+export const entitiesIncludesCurrentUser = (entities: EntityObject[], currentUser: User | undefined) => {
+  return entities.some((entity) => entity.id === currentUser?.dn)
+}
+
+export const fromEntity = (entity: string) => {
+  const [kind, ...values] = entity.split(':')
+  return new EntityObject(kind, values.join(':'))
 }

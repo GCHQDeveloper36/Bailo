@@ -4,7 +4,7 @@ import {
   ListUsersCommandOutput,
 } from '@aws-sdk/client-cognito-identity-provider'
 
-import { UserInformation } from '../connectors/authentication/Base.js'
+import { EntityInformation } from '../connectors/authentication/Base.js'
 import config from '../utils/config.js'
 import { ConfigurationError, InternalError } from '../utils/error.js'
 
@@ -43,7 +43,7 @@ export async function listUsers(query: string, exactMatch = false) {
     return []
   }
 
-  const initialValue: Array<UserInformation & { dn: string }> = []
+  const initialValue: Array<EntityInformation> = []
   const users = results.Users.reduce((acc, cognitoUser) => {
     const dn = cognitoUser.Attributes?.find((attribute) => attribute.Name === dnName)?.Value
     if (!dn) {
@@ -51,11 +51,13 @@ export async function listUsers(query: string, exactMatch = false) {
     }
     const email = cognitoUser.Attributes?.find((attribute) => attribute.Name === 'email')?.Value
     const name = cognitoUser.Attributes?.find((attribute) => attribute.Name === 'given_name')?.Value
-    const info: UserInformation = {
+    const info: EntityInformation = {
+      kind: 'user',
+      dn,
       ...(email && { email }),
       ...(name && { name }),
     }
-    acc.push({ ...info, dn })
+    acc.push(info)
     return acc
   }, initialValue)
   return users

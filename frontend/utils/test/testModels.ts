@@ -1,4 +1,4 @@
-import { UserInformation } from 'src/common/UserDisplay'
+import { EntityInformation } from 'src/common/EntityDisplay'
 import {
   AccessRequestInterface,
   EntryCardInterface,
@@ -197,8 +197,12 @@ export const testManagerRole: Role = {
   name: 'Manager',
 }
 
-export const testUserInformation: UserInformation = {
+export const testUserInformation: EntityInformation = {
+  kind: 'user',
+  dn: 'test@example.com',
   name: 'Joe Bloggs',
   email: 'test@example.com',
-  birthday: '2/2/22',
+  metadata: {
+    birthday: '2/2/22',
+  },
 }

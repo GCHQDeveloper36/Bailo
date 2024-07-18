@@ -23,7 +23,7 @@ export const getEntities = [
     } = parse(req, getEntitiesSchema)
 
     if (q.length < 3) {
-      return { results: [] }
+      return res.json({ results: [] })
     }
     const queryResults = await authentication.queryEntities(q)
 

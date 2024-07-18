@@ -1,7 +1,7 @@
 import { Button, Card, Divider, Link, Stack, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
-import UserDisplay from 'src/common/UserDisplay'
-import { EntryInterface, InferenceInterface } from 'types/types'
+import EntityDisplay from 'src/common/EntityDisplay'
+import { EntityObject, EntryInterface, InferenceInterface } from 'types/types'
 import { formatDateString } from 'utils/dateUtils'
 
 type InferenceDisplayProps = {
@@ -37,7 +37,7 @@ export default function InferenceDisplay({ model, inference }: InferenceDisplayP
           </Button>
         </Stack>
         <Typography variant='caption' sx={{ mb: 2 }}>
-          Created by {<UserDisplay dn={inference.createdBy} />} on
+          Created by {<EntityDisplay entity={new EntityObject('user', inference.createdBy)} />} on
           <Typography variant='caption' fontWeight='bold'>
             {` ${formatDateString(inference.createdAt)}`}
           </Typography>

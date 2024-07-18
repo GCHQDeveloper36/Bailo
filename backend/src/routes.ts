@@ -193,7 +193,7 @@ server.patch('/api/v2/team/:teamId', ...patchTeam)
 
 server.get('/api/v2/entities', ...getEntities)
 server.get('/api/v2/entities/me', ...getCurrentUser)
-server.get('/api/v2/entity/:dn/lookup', ...getEntityLookup)
+server.get('/api/v2/entity/:entity/lookup', ...getEntityLookup)
 
 server.get('/api/v2/config/ui', ...getUiConfig)
 

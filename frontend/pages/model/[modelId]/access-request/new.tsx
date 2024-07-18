@@ -14,7 +14,7 @@ import MultipleErrorWrapper from 'src/errors/MultipleErrorWrapper'
 import JsonSchemaForm from 'src/Form/JsonSchemaForm'
 import Link from 'src/Link'
 import MessageAlert from 'src/MessageAlert'
-import { EntryKind, SplitSchemaNoRender } from 'types/types'
+import { EntityObject, EntryKind, SplitSchemaNoRender } from 'types/types'
 import { getErrorMessage } from 'utils/fetcher'
 import { getStepsData, getStepsFromSchema, setStepValidate, validateForm } from 'utils/formUtils'
 
@@ -40,7 +40,7 @@ export default function NewAccessRequest() {
 
     const defaultState = {
       overview: {
-        entities: [`user:${currentUser.dn}`],
+        entities: [new EntityObject('user', currentUser.dn)],
         endDate: dayjs(new Date()).format('YYYY-MM-DD').toString(),
       },
     }

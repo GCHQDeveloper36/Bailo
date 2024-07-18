@@ -1,21 +1,12 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import GroupsIcon from '@mui/icons-material/Groups'
 import PersonIcon from '@mui/icons-material/Person'
-import {
-  Autocomplete,
-  Chip,
-  IconButton,
-  Stack,
-  TableCell,
-  TableRow,
-  TextField,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import { Autocomplete, Chip, IconButton, Stack, TableCell, TableRow, TextField, Tooltip } from '@mui/material'
 import _ from 'lodash-es'
 import { SyntheticEvent, useMemo } from 'react'
-import UserDisplay from 'src/common/UserDisplay'
-import { CollaboratorEntry, EntityKind, Role } from 'types/types'
+import EntityDisplay from 'src/common/EntityDisplay'
+import { CollaboratorEntry, Role } from 'types/types'
+import { fromEntity } from 'utils/entityUtils'
 import { toSentenceCase } from 'utils/stringUtils'
 
 type EntityItemProps = {
@@ -120,10 +111,5 @@ type EntityNameDisplayProps = {
 }
 
 function EntityNameDisplay({ entity }: EntityNameDisplayProps) {
-  const [entityKind, entityName] = useMemo(() => entity.entity.split(':'), [entity])
-  return entityKind === EntityKind.USER || entityKind === EntityKind.GROUP ? (
-    <UserDisplay dn={entityName} />
-  ) : (
-    <Typography fontWeight='bold'>{entityName}</Typography>
-  )
+  return <EntityDisplay entity={fromEntity(entity.entity)} />
 }

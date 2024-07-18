@@ -7,12 +7,12 @@ import { useTheme } from '@mui/material/styles'
 import { useGetModelRoles } from 'actions/model'
 import { patchResponse } from 'actions/response'
 import { useState } from 'react'
+import EntityDisplay from 'src/common/EntityDisplay'
 import Loading from 'src/common/Loading'
 import UserAvatar from 'src/common/UserAvatar'
-import UserDisplay from 'src/common/UserDisplay'
 import MessageAlert from 'src/MessageAlert'
 import EditableReviewComment from 'src/reviews/EditableReviewComment'
-import { Decision, EntityKind, ResponseInterface, User } from 'types/types'
+import { Decision, EntityKind, EntityObject, ResponseInterface } from 'types/types'
 import { formatDateString } from 'utils/dateUtils'
 import { getErrorMessage } from 'utils/fetcher'
 import { getRoleDisplay } from 'utils/roles'
@@ -98,7 +98,7 @@ export default function ReviewDecisionDisplay({
             <Stack alignItems={{ xs: 'center', sm: 'flex-start' }} spacing={{ xs: 1, sm: 0 }}>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems='center'>
                 <Typography data-test='reviewDecisionDisplay'>
-                  <UserDisplay dn={username} />
+                  <EntityDisplay entity={new EntityObject('user', username)} />
                   {response.decision === Decision.Approve && ' has approved'}
                   {response.decision === Decision.RequestChanges && ' has requested changes'}
                   {response.decision === Decision.Undo && ' has undone their review'}

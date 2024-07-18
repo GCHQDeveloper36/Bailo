@@ -1,6 +1,19 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
+  "definitions": {
+    "entityObject": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    }
+  },
   "properties": {
     "overview": {
       "title": "Details",
@@ -19,9 +32,7 @@
         "entities": {
           "title": "Additional contacts",
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": { "$ref": "#/definitions/entityObject" },
           "minLength": 1,
           "widget": "entitySelector"
         }

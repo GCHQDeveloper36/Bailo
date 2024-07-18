@@ -5,16 +5,17 @@ import { useGetModel } from 'actions/model'
 import { postReviewResponse, useGetReviewRequestsForModel } from 'actions/review'
 import { useRouter } from 'next/router'
 import { useMemo, useState } from 'react'
+import EntityDisplay from 'src/common/EntityDisplay'
 import Loading from 'src/common/Loading'
 import ReviewWithComment from 'src/common/ReviewWithComment'
 import Title from 'src/common/Title'
-import UserDisplay from 'src/common/UserDisplay'
 import MultipleErrorWrapper from 'src/errors/MultipleErrorWrapper'
 import Link from 'src/Link'
 import MessageAlert from 'src/MessageAlert'
-import { DecisionKeys } from 'types/types'
+import { DecisionKeys, EntityObject } from 'types/types'
 import { EntryKind } from 'types/types'
 import { formatDateString } from 'utils/dateUtils'
+import { fromEntity } from 'utils/entityUtils'
 import { getErrorMessage } from 'utils/fetcher'
 
 export default function AccessRequestReview() {
@@ -60,8 +61,8 @@ export default function AccessRequestReview() {
   const accessRequestEntities = useMemo(() => {
     if (accessRequest) {
       return accessRequest.metadata.overview.entities.map((entity) => (
-        <Grid item xs={3} key={entity}>
-          <UserDisplay dn={entity} />
+        <Grid item xs={3} key={entity.toString()}>
+          <EntityDisplay entity={fromEntity(entity)} />
         </Grid>
       ))
     }
@@ -104,7 +105,7 @@ export default function AccessRequestReview() {
             <Divider />
             <Stack spacing={1} direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
               <Typography variant='caption'>
-                Created by {<UserDisplay dn={accessRequest.createdBy} />} on
+                Created by {<EntityDisplay entity={new EntityObject('user', accessRequest.createdBy)} />} on
                 <Typography variant='caption' fontWeight='bold'>
                   {` ${formatDateString(accessRequest.createdAt)} `}
                 </Typography>

@@ -1,5 +1,5 @@
 import qs from 'querystring'
-import { UserInformation } from 'src/common/UserDisplay'
+import { EntityInformation } from 'src/common/EntityDisplay'
 import useSWR from 'swr'
 import { EntityObject, EntryInterface, TokenActionKeys, TokenInterface, TokenScopeKeys, User } from 'types/types'
 
@@ -20,9 +20,11 @@ export function useListUsers(q: string) {
     fetcher,
   )
 
+  const users = data ? data.results.map((r) => new EntityObject(r.kind, r.id)) : []
+
   return {
     mutateUsers: mutate,
-    users: data ? data.results : [],
+    users,
     isUsersLoading: !error && !data,
     isUsersError: error,
   }
@@ -43,18 +45,21 @@ export function useGetCurrentUser() {
   }
 }
 
-interface UserInformationResponse {
-  entity: UserInformation
+interface EntityInformationResponse {
+  entity: EntityInformation
 }
 
-export function useGetUserInformation(dn: string) {
-  const { data, error, mutate } = useSWR<UserInformationResponse, ErrorInfo>(`/api/v2/entity/${dn}/lookup`, fetcher)
+export function useGetEntityInformation(entity: EntityObject) {
+  const { data, error, mutate } = useSWR<EntityInformationResponse, ErrorInfo>(
+    `/api/v2/entity/${entity.toString()}/lookup`,
+    fetcher,
+  )
 
   return {
-    mutateUserInformation: mutate,
-    userInformation: data?.entity || undefined,
-    isUserInformationLoading: !error && !data,
-    isUserInformationError: error,
+    mutateEntityInformation: mutate,
+    entityInformation: data?.entity || undefined,
+    isEntityInformationLoading: !error && !data,
+    isEntityInformationError: error,
   }
 }
 

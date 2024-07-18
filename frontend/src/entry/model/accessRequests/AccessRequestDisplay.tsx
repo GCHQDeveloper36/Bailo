@@ -4,13 +4,13 @@ import { useGetResponses } from 'actions/response'
 import { useGetReviewRequestsForModel } from 'actions/review'
 import { useEffect, useState } from 'react'
 import CopyToClipboardButton from 'src/common/CopyToClipboardButton'
+import EntityDisplay from 'src/common/EntityDisplay'
 import Loading from 'src/common/Loading'
-import UserDisplay from 'src/common/UserDisplay'
 import ReviewBanner from 'src/entry/model/reviews/ReviewBanner'
 import ReviewDisplay from 'src/entry/model/reviews/ReviewDisplay'
 import Link from 'src/Link'
 import MessageAlert from 'src/MessageAlert'
-import { AccessRequestInterface, ResponseInterface } from 'types/types'
+import { AccessRequestInterface, EntityObject, ResponseInterface } from 'types/types'
 import { formatDateString } from 'utils/dateUtils'
 import { latestReviewsForEachUser } from 'utils/reviewUtils'
 import { plural } from 'utils/stringUtils'
@@ -76,7 +76,7 @@ export default function AccessRequestDisplay({ accessRequest, hideReviewBanner =
             </Stack>
             <Stack spacing={1} direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
               <Typography variant='caption'>
-                Created by {<UserDisplay dn={accessRequest.createdBy} />} on
+                Created by {<EntityDisplay entity={new EntityObject('user', accessRequest.createdBy)} />} on
                 <Typography variant='caption' fontWeight='bold'>
                   {` ${formatDateString(accessRequest.createdAt)} `}
                 </Typography>
@@ -109,8 +109,8 @@ export default function AccessRequestDisplay({ accessRequest, hideReviewBanner =
                 </Typography>
                 <Grid container>
                   {accessRequest.metadata.overview.entities.map((entity) => (
-                    <Grid item xs={3} key={entity}>
-                      <UserDisplay dn={entity} />
+                    <Grid item xs={3} key={entity.toString()}>
+                      <EntityDisplay entity={new EntityObject('user', entity)} />
                     </Grid>
                   ))}
                 </Grid>

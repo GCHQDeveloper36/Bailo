@@ -1,8 +1,8 @@
 import { TableBody, TableCell, TableRow } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { useRouter } from 'next/router'
-import UserDisplay from 'src/common/UserDisplay'
-import { EntryCardRevisionInterface, EntryKindKeys } from 'types/types'
+import EntityDisplay from 'src/common/EntityDisplay'
+import { EntityObject, EntryCardRevisionInterface, EntryKindKeys } from 'types/types'
 import { formatDateString } from 'utils/dateUtils'
 
 type EntryCardRevisionProps = {
@@ -23,7 +23,7 @@ export default function EntryCardRevision({ entryCard, entryKind }: EntryCardRev
       >
         <TableCell sx={{ color: theme.palette.secondary.main }}>{entryCard.version}</TableCell>
         <TableCell sx={{ color: theme.palette.primary.main }}>
-          <UserDisplay dn={entryCard.createdBy} />
+          <EntityDisplay entity={new EntityObject('user', entryCard.createdBy)} />
         </TableCell>
         <TableCell sx={{ color: theme.palette.primary.main }}>{formatDateString(entryCard.createdAt)}</TableCell>
       </TableRow>

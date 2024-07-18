@@ -9,7 +9,10 @@ export const Roles = {
 } as const
 export type RoleKeys = (typeof Roles)[keyof typeof Roles]
 
-export interface UserInformation {
+export interface EntityInformation {
+  kind: string
+  dn: string
+  metadata?: any
   name?: string
   organisation?: string
   email?: string
@@ -20,12 +23,12 @@ export abstract class BaseAuthenticationConnector {
 
   abstract queryEntities(query: string): Promise<Array<{ kind: string; id: string }>>
   abstract getEntities(user: UserInterface): Promise<Array<string>>
-  abstract getUserInformation(userEntity: string): Promise<UserInformation>
+  abstract getEntityInformation(userEntity: string): Promise<EntityInformation>
   abstract getEntityMembers(entity: string): Promise<Array<string>>
 
-  async getUserInformationList(entity: string): Promise<UserInformation[]> {
+  async getUserInformationList(entity: string): Promise<EntityInformation[]> {
     const entities = await this.getEntityMembers(entity)
-    return Promise.all(entities.map((member) => this.getUserInformation(member)))
+    return Promise.all(entities.map((member) => this.getEntityInformation(member)))
   }
 
   authenticationMiddleware(): Array<{ path?: string; middleware: Array<RequestHandler> }> {

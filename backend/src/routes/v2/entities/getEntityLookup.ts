@@ -2,21 +2,20 @@ import bodyParser from 'body-parser'
 import { Request, Response } from 'express'
 import { z } from 'zod'
 
-import { UserInformation } from '../../../connectors/authentication/Base.js'
+import { EntityInformation as EntityInformation } from '../../../connectors/authentication/Base.js'
 import authentication from '../../../connectors/authentication/index.js'
-import { registerPath, UserInformationSchema } from '../../../services/specification.js'
-import { toEntity } from '../../../utils/entity.js'
+import { EntityInformationSchema, registerPath } from '../../../services/specification.js'
 import { parse } from '../../../utils/validate.js'
 
 export const getEntityLookupSchema = z.object({
   params: z.object({
-    dn: z.string(),
+    entity: z.string(),
   }),
 })
 
 registerPath({
   method: 'get',
-  path: '/api/v2/entity/{dn}/lookup',
+  path: '/api/v2/entity/{entity}/lookup',
   tags: ['user'],
   description: 'Get information about an entity',
   schema: getEntityLookupSchema,
@@ -25,7 +24,7 @@ registerPath({
       description: 'Information about the provided entity.',
       content: {
         'application/json': {
-          schema: z.object({ entity: UserInformationSchema }),
+          schema: z.object({ entity: EntityInformationSchema }),
         },
       },
     },
@@ -33,17 +32,17 @@ registerPath({
 })
 
 interface GetEntityLookup {
-  entity: UserInformation
+  entity: EntityInformation
 }
 
 export const getEntityLookup = [
   bodyParser.json(),
   async (req: Request, res: Response<GetEntityLookup>) => {
     const {
-      params: { dn },
+      params: { entity },
     } = parse(req, getEntityLookupSchema)
 
-    const information = await authentication.getUserInformation(toEntity('user', dn))
+    const information = await authentication.getEntityInformation(entity)
 
     return res.json({ entity: information })
   },

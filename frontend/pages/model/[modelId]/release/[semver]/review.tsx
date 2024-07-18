@@ -8,15 +8,15 @@ import Markdown from 'markdown-to-jsx'
 import { useRouter } from 'next/router'
 import prettyBytes from 'pretty-bytes'
 import { useMemo, useState } from 'react'
+import EntityDisplay from 'src/common/EntityDisplay'
 import Loading from 'src/common/Loading'
 import ReviewWithComment from 'src/common/ReviewWithComment'
 import Title from 'src/common/Title'
-import UserDisplay from 'src/common/UserDisplay'
 import CodeLine from 'src/entry/model/registry/CodeLine'
 import MultipleErrorWrapper from 'src/errors/MultipleErrorWrapper'
 import Link from 'src/Link'
 import MessageAlert from 'src/MessageAlert'
-import { DecisionKeys } from 'types/types'
+import { DecisionKeys, EntityObject } from 'types/types'
 import { EntryKind } from 'types/types'
 import { formatDateString } from 'utils/dateUtils'
 import { getErrorMessage } from 'utils/fetcher'
@@ -134,7 +134,7 @@ export default function ReleaseReview() {
             <MessageAlert message={errorMessage} severity='error' />
             <Divider />
             <Typography variant='caption' sx={{ mb: 2 }}>
-              Created by {<UserDisplay dn={release.createdBy} />} on
+              Created by {<EntityDisplay entity={new EntityObject('user', release.createdBy)} />} on
               <Typography variant='caption' fontWeight='bold'>
                 {` ${formatDateString(release.createdAt)}`}
               </Typography>

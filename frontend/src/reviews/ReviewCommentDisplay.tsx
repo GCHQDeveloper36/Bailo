@@ -2,10 +2,10 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import { Box, Card, Divider, IconButton, Menu, MenuItem, Stack, Typography } from '@mui/material'
 import { patchResponse } from 'actions/response'
 import { useState } from 'react'
+import EntityDisplay from 'src/common/EntityDisplay'
 import UserAvatar from 'src/common/UserAvatar'
-import UserDisplay from 'src/common/UserDisplay'
 import EditableReviewComment from 'src/reviews/EditableReviewComment'
-import { EntityKind, ResponseInterface, User } from 'types/types'
+import { EntityKind, EntityObject, ResponseInterface, User } from 'types/types'
 import { formatDateString } from 'utils/dateUtils'
 import { getErrorMessage } from 'utils/fetcher'
 
@@ -73,7 +73,7 @@ export default function ReviewCommentDisplay({
         >
           <Stack direction='row' spacing={1} alignItems='center' sx={{ width: '100%' }} justifyContent='space-between'>
             <Typography>
-              <UserDisplay dn={username} />
+              <EntityDisplay entity={new EntityObject('user', username)} />
               {' has left a comment'}
             </Typography>
             <Stack direction='row' alignItems='center' spacing={1}>

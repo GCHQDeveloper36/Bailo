@@ -1,6 +1,6 @@
 import { UserInterface } from '../../models/User.js'
 import { fromEntity, toEntity } from '../../utils/entity.js'
-import { BaseAuthenticationConnector, RoleKeys, Roles, UserInformation } from './Base.js'
+import { BaseAuthenticationConnector, EntityInformation as EntityInformation, RoleKeys, Roles } from './Base.js'
 
 const SillyEntityKind = {
   User: 'user',
@@ -59,17 +59,25 @@ export class SillyAuthenticationConnector extends BaseAuthenticationConnector {
     return [toEntity(SillyEntityKind.User, user.dn)]
   }
 
-  async getUserInformation(entity: string): Promise<UserInformation> {
+  async getEntityInformation(entity: string): Promise<EntityInformation> {
     const { kind, value } = fromEntity(entity)
 
-    if (kind !== SillyEntityKind.User) {
-      throw new Error(`Cannot get user information for a non-user entity: ${entity}`)
-    }
-
-    return {
-      email: `${value}@example.com`,
-      name: 'Joe Bloggs',
-      organisation: 'Acme Corp',
+    if (kind == SillyEntityKind.User) {
+      return {
+        kind,
+        dn: value,
+        email: `${value}@example.com`,
+        name: 'Joe Bloggs',
+        organisation: 'Acme Corp',
+      }
+    } else {
+      // (kind == SillyEntityKind.Group)
+      return {
+        kind,
+        dn: value,
+        email: `${value}@example.com`,
+        name: value,
+      }
     }
   }
 

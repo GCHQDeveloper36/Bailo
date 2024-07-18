@@ -2,7 +2,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { render, screen, waitFor } from '@testing-library/react'
 import { useGetResponses } from 'actions/response'
 import { useGetReviewRequestsForModel } from 'actions/review'
-import { UserDisplayProps } from 'src/common/UserDisplay'
+import { EntityDisplayProps } from 'src/common/EntityDisplay'
 import AccessRequestDisplay from 'src/entry/model/accessRequests/AccessRequestDisplay'
 import { ReviewBannerProps } from 'src/entry/model/reviews/ReviewBanner'
 import { ReviewDisplayProps } from 'src/entry/model/reviews/ReviewDisplay'
@@ -25,7 +25,7 @@ vi.mock('actions/response', () => ({
 }))
 
 vi.mock('src/entry/model/reviews/ReviewBanner.tsx', () => ({ default: (_props: ReviewBannerProps) => <></> }))
-vi.mock('src/common/UserDisplay.tsx', () => ({ default: (_props: UserDisplayProps) => <></> }))
+vi.mock('src/common/EntityDisplay.tsx', () => ({ default: (_props: EntityDisplayProps) => <></> }))
 vi.mock('src/entry/model/reviews/ReviewDisplay.tsx', () => ({ default: (_props: ReviewDisplayProps) => <></> }))
 
 describe('AccessRequestDisplay', () => {

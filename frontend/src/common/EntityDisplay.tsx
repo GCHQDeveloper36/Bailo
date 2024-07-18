@@ -2,32 +2,36 @@ import { Label } from '@mui/icons-material'
 import EmailIcon from '@mui/icons-material/Email'
 import UserIcon from '@mui/icons-material/Person'
 import { Box, Divider, Popover, Stack, Typography } from '@mui/material'
-import { useGetUserInformation } from 'actions/user'
+import { useGetEntityInformation } from 'actions/user'
 import { MouseEvent, useMemo, useRef, useState } from 'react'
 import CopyToClipboardButton from 'src/common/CopyToClipboardButton'
 import Loading from 'src/common/Loading'
+import { EntityObject } from 'types/types'
 
-export type UserInformation = {
+export type EntityInformation = {
+  kind: string
+  dn: string
   name?: string
   email?: string
 } & AdditionalProperties
 
-interface AdditionalProperties {
-  [x: string]: string
+type AdditionalProperties = {
+  metadata?: {
+    [x: string]: string
+  }
 }
 
-export type UserDisplayProps = {
-  dn: string
+export type EntityDisplayProps = {
+  entity: EntityObject
   hidePopover?: boolean
 }
 
-export default function UserDisplay({ dn, hidePopover = false }: UserDisplayProps) {
+export default function EntityDisplay({ entity, hidePopover = false }: EntityDisplayProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const open = useMemo(() => !!anchorEl, [anchorEl])
   const ref = useRef<HTMLDivElement>(null)
-  const { userInformation, isUserInformationLoading, isUserInformationError } = useGetUserInformation(
-    dn.includes(':') ? dn.split(':')[1] : dn,
-  )
+
+  const { entityInformation, isEntityInformationLoading, isEntityInformationError } = useGetEntityInformation(entity)
 
   const popoverEnter = () => {
     if (ref.current) {
@@ -39,7 +43,7 @@ export default function UserDisplay({ dn, hidePopover = false }: UserDisplayProp
     setAnchorEl(null)
   }
 
-  if (isUserInformationLoading) {
+  if (isEntityInformationLoading) {
     return <Loading />
   }
 
@@ -48,14 +52,14 @@ export default function UserDisplay({ dn, hidePopover = false }: UserDisplayProp
       <Box
         component='span'
         ref={ref}
-        data-test='userDisplayName'
+        data-test='entityDisplayName'
         aria-owns={open ? 'user-popover' : undefined}
         aria-haspopup='true'
         sx={{ fontWeight: 'bold' }}
         onMouseEnter={(e: MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget)}
         onMouseLeave={() => setAnchorEl(null)}
       >
-        {userInformation ? userInformation.name : dn.charAt(0).toUpperCase() + dn.slice(1)}
+        {entityInformation ? entityInformation.name : entity.id.charAt(0).toUpperCase() + entity.id.slice(1)}
       </Box>
       {!hidePopover && (
         <Popover
@@ -80,45 +84,59 @@ export default function UserDisplay({ dn, hidePopover = false }: UserDisplayProp
           <Stack spacing={1} sx={{ p: 2 }}>
             <Stack direction='row' alignItems='center' spacing={1}>
               <UserIcon color='primary' />
-              <Typography color='primary' fontWeight='bold' data-test='userDisplayNameProperty'>
-                {userInformation ? userInformation.name : dn.charAt(0).toUpperCase() + dn.slice(1)}
+              <Typography color='primary' fontWeight='bold' data-test='entityDisplayNameProperty'>
+                {entityInformation ? entityInformation.name : entity.id.charAt(0).toUpperCase() + entity.id.slice(1)}
               </Typography>
             </Stack>
             <Divider />
-            {!userInformation && isUserInformationError && (
-              <Typography>{isUserInformationError.info.message}</Typography>
+            {!entityInformation && isEntityInformationError && (
+              <Typography>{isEntityInformationError.info.message}</Typography>
             )}
-            {userInformation && (
+            {entityInformation && (
               <>
                 <Stack direction='row' spacing={1} alignItems='center'>
                   <EmailIcon color='primary' />
-                  <Typography data-test='userDisplayEmailProperty'>
+                  <Typography data-test='entityDisplayEmailProperty'>
                     <Box component='span' fontWeight='bold'>
                       Email
                     </Box>
-                    : {userInformation.email}
+                    : {entityInformation.email}
                   </Typography>
                   <CopyToClipboardButton
-                    textToCopy={userInformation.email ? userInformation.email : ''}
+                    textToCopy={entityInformation.email ? entityInformation.email : ''}
                     notificationText='Copied email address to clipboard'
                     ariaLabel='copy email address to clipboard'
                   />
                 </Stack>
-                {Object.keys(userInformation).map((key) => {
-                  if (key !== 'name' && key !== 'email') {
+                {Object.keys(entityInformation).map((key) => {
+                  if (key !== 'dn' && key !== 'kind' && key !== 'name' && key !== 'email') {
                     return (
                       <Stack direction='row' spacing={1} key={key}>
                         <Label color='primary' />
-                        <Typography data-test={`userDisplayDynamicProperty-${key}`}>
+                        <Typography data-test={`entityDisplayDynamicProperty-${key}`}>
                           <Box component='span' fontWeight='bold'>
                             {key.charAt(0).toUpperCase() + key.slice(1)}
                           </Box>
-                          : {userInformation[key]}
+                          : {entityInformation[key]}
                         </Typography>
                       </Stack>
                     )
                   }
                 })}
+                {entityInformation.metadata &&
+                  Object.keys(entityInformation.metadata).map((key) => {
+                    return (
+                      <Stack direction='row' spacing={1} key={key}>
+                        <Label color='primary' />
+                        <Typography data-test={`entityDisplayDynamicProperty-${key}`}>
+                          <Box component='span' fontWeight='bold'>
+                            {key.charAt(0).toUpperCase() + key.slice(1)}
+                          </Box>
+                          : {entityInformation.metadata && entityInformation.metadata[key]}
+                        </Typography>
+                      </Stack>
+                    )
+                  })}
               </>
             )}
           </Stack>

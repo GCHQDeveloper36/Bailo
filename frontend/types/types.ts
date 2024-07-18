@@ -188,9 +188,18 @@ export interface User {
   isAdmin: boolean
 }
 
-export interface EntityObject {
-  kind: string
-  id: string
+export class EntityObject {
+  constructor(kind: string, id: string) {
+    this.kind = kind
+    this.id = id
+  }
+
+  public readonly kind: string
+  public readonly id: string
+
+  public toString = () => {
+    return `${this.kind}:${this.id}`
+  }
 }
 
 export const TokenScope = {

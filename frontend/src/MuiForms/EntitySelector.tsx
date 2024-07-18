@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField'
 import { FormContextType } from '@rjsf/utils'
 import { debounce } from 'lodash-es'
 import { KeyboardEvent, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react'
-import UserDisplay from 'src/common/UserDisplay'
+import EntityDisplay from 'src/common/EntityDisplay'
 import { EntityObject } from 'types/types'
 
 import { useGetCurrentUser, useListUsers } from '../../actions/user'
@@ -15,8 +15,8 @@ import MessageAlert from '../MessageAlert'
 interface EntitySelectorProps {
   label?: string
   required?: boolean
-  value: string[]
-  onChange: (newValue: string[]) => void
+  value: EntityObject[]
+  onChange: (newValue: EntityObject[]) => void
   formContext?: FormContextType
   rawErrors?: string[]
 }
@@ -32,27 +32,18 @@ export default function EntitySelector(props: EntitySelectorProps) {
   const { currentUser, isCurrentUserLoading, isCurrentUserError } = useGetCurrentUser()
 
   const theme = useTheme()
-  const currentUserId = useMemo(() => (currentUser ? currentUser?.dn : ''), [currentUser])
+  const currentUserId = useMemo(() => (currentUser ? currentUser.dn : ''), [currentUser])
+  const currentUserEntity = useMemo(() => new EntityObject('user', currentUserId), [currentUserId])
 
   useEffect(() => {
     if (formContext && formContext.defaultCurrentUser) {
-      setSelectedEntities([{ id: currentUserId, kind: 'user' }])
+      setSelectedEntities((s) => (!s.includes(currentUserEntity) ? [...s, currentUserEntity] : s))
     }
-  }, [currentUserId, formContext])
-
-  useEffect(() => {
-    if (currentValue) {
-      const updatedEntities: EntityObject[] = currentValue.map((value) => {
-        const [kind, id] = value.split(':')
-        return { kind, id }
-      })
-      setSelectedEntities(updatedEntities)
-    }
-  }, [currentValue])
+  }, [currentUserEntity, formContext])
 
   const handleUserChange = useCallback(
     (_event: SyntheticEvent<Element, Event>, newValues: EntityObject[]) => {
-      onChange(newValues.map((value) => `${value.kind}:${value.id}`))
+      onChange(newValues)
       setSelectedEntities(newValues)
     },
     [onChange],
@@ -111,11 +102,11 @@ export default function EntitySelector(props: EntitySelectorProps) {
             options={users || []}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
-                <Box key={option.id} sx={{ maxWidth: '200px' }}>
+                <Box key={option.toString()} sx={{ maxWidth: '200px' }}>
                   <Chip
                     {...getTagProps({ index })}
                     sx={{ textOverflow: 'ellipsis' }}
-                    label={<UserDisplay dn={option.id} />}
+                    label={<EntityDisplay entity={option} />}
                   />
                 </Box>
               ))
@@ -154,7 +145,7 @@ export default function EntitySelector(props: EntitySelectorProps) {
           <Box sx={{ overflowX: 'auto', p: 1 }}>
             <Stack spacing={1} direction='row'>
               {currentValue.map((entity) => (
-                <Chip label={<UserDisplay dn={entity} />} key={entity} sx={{ width: 'fit-content' }} />
+                <Chip label={<EntityDisplay entity={entity} />} key={entity.toString()} sx={{ width: 'fit-content' }} />
               ))}
             </Stack>
           </Box>

@@ -44,7 +44,8 @@ export async function requestReviewForRelease(entity: string, review: ReviewDoc,
       { title: 'Semver', data: release.semver },
       {
         title: 'Created By',
-        data: (await authentication.getUserInformation(toEntity('user', release.createdBy))).name || release.createdBy,
+        data:
+          (await authentication.getEntityInformation(toEntity('user', release.createdBy))).name || release.createdBy,
       },
     ],
     [
@@ -75,7 +76,7 @@ export async function requestReviewForAccessRequest(
       {
         title: 'Created By',
         data:
-          (await authentication.getUserInformation(toEntity('user', accessRequest.createdBy))).name ||
+          (await authentication.getEntityInformation(toEntity('user', accessRequest.createdBy))).name ||
           accessRequest.createdBy,
       },
     ],
@@ -114,7 +115,7 @@ export async function notifyReviewResponseForRelease(reviewResponse: ResponseInt
 
   const emailContent = buildEmail(
     `Release ${release.semver} has been reviewed by ${
-      (await authentication.getUserInformation(reviewResponse.entity)).name
+      (await authentication.getEntityInformation(reviewResponse.entity)).name
     }`,
     [
       { title: 'Model ID', data: release.modelId },
@@ -154,7 +155,7 @@ export async function notifyReviewResponseForAccess(
   }
   const emailContent = buildEmail(
     `Access request for model ${accessRequest.modelId} has been reviewed by ${
-      (await authentication.getUserInformation(reviewResponse.entity)).name
+      (await authentication.getEntityInformation(reviewResponse.entity)).name
     }`,
     [
       { title: 'Model ID', data: accessRequest.modelId },
