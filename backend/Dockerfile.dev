@@ -1,4 +1,7 @@
-FROM python:3.12.8-bullseye AS sphinx-docs
+# syntax=docker/dockerfile:1
+ARG PY_SRC_IMG=python:3.12.8-bullseye
+ARG SRC_IMG=node:22.6.0-alpine
+FROM ${PY_SRC_IMG} AS sphinx-docs
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1

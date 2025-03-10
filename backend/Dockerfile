@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:1
-FROM python:3.12.8-bullseye AS sphinx-docs
+ARG PY_SRC_IMG=python:3.12.8-bullseye
+ARG SRC_IMG=node:22.6.0-alpine
+
+FROM ${PY_SRC_IMG} AS sphinx-docs
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -16,34 +19,32 @@ RUN pip install --no-cache-dir --upgrade bailo -r requirements.txt
 
 RUN make dirhtml
 
-FROM node:22.6.0-alpine AS installer
+FROM ${SRC_IMG} AS installer
+EXPOSE 3001
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat ca-certificates
 RUN apk update
 
 WORKDIR /app
-
 COPY package*.json ./
+COPY --from=sphinx-docs /app/docs/python-docs python-docs
+
+FROM installer AS dev
+EXPOSE 9229
+
 RUN --mount=type=cache,target=/cache/npm npm install --cache=/cache/npm
 
 COPY . .
 RUN npm run build
+CMD [ "npm", "run", "dev" ]
 
-FROM node:22.6.0-alpine AS runner
+FROM installer AS runner
 
-RUN apk update
-RUN apk add --no-cache libc6-compat ca-certificates
+ENV NODE_ENV=production
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN --mount=type=cache,target=/cache/npm npm install --omit=dev --cache=/cache/npm
+RUN --mount=type=cache,target=/cache/npm npm install --cache=/cache/npm
 
 COPY --from=installer /app/config config
 COPY --from=installer /app/dist .
-COPY --from=sphinx-docs /app/docs/python-docs python-docs
-
-ENV NODE_ENV=production
-EXPOSE 3001
 
 CMD ["node", "src/index.js"]
