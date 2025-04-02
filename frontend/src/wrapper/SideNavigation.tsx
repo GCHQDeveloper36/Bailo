@@ -8,8 +8,7 @@ import SchemaIcon from '@mui/icons-material/Schema'
 import { Divider, List, ListItem, ListItemButton, ListItemIcon, Stack, Toolbar } from '@mui/material'
 import MuiDrawer from '@mui/material/Drawer'
 import { styled } from '@mui/material/styles'
-import { useGetResponses } from 'actions/response'
-import { useGetReviewRequestsForUser } from 'actions/review'
+import { useGetReviewsSummaryForUser } from 'actions/review'
 import { CSSProperties, useEffect, useState } from 'react'
 import Loading from 'src/common/Loading'
 import MessageAlert from 'src/MessageAlert'
@@ -79,37 +78,25 @@ export default function SideNavigation({
   pageTopStyling = {},
 }: SideNavigationProps) {
   const [reviewCount, setReviewCount] = useState(0)
-  const { reviews, isReviewsLoading, isReviewsError } = useGetReviewRequestsForUser()
-  const { responses, isResponsesLoading, isResponsesError } = useGetResponses(reviews.map((review) => review._id))
+  const { openReviews, isSummaryLoading, isSummaryError } = useGetReviewsSummaryForUser({})
 
   useEffect(() => {
     async function fetchReviewCount() {
       onResetErrorMessage()
-      if (reviews) {
-        setReviewCount(
-          reviews.filter(
-            (review) =>
-              !responses.find(
-                (response) => response.entity === `user:${currentUser.dn}` && response.parentId === review._id,
-              ),
-          ).length,
-        )
+      if (openReviews) {
+        setReviewCount(openReviews)
       }
     }
     fetchReviewCount()
-  }, [onResetErrorMessage, reviews, responses, currentUser.dn])
+  }, [onResetErrorMessage, openReviews, currentUser.dn])
 
-  if (isReviewsError) {
-    return <MessageAlert message={isReviewsError.info.message} severity='error' />
-  }
-
-  if (isResponsesError) {
-    return <MessageAlert message={isResponsesError.info.message} severity='error' />
+  if (isSummaryError) {
+    return <MessageAlert message={isSummaryError.info.message} severity='error' />
   }
 
   return (
     <Drawer sx={pageTopStyling} variant='permanent' open={drawerOpen}>
-      {(isReviewsLoading || isResponsesLoading) && <Loading />}
+      {isSummaryLoading && <Loading />}
       <Toolbar
         sx={(theme) => ({
           alignItems: 'center',

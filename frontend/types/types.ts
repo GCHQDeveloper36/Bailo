@@ -570,6 +570,11 @@ export function isReviewKind(value: unknown): value is ReviewKindKeys {
   return value === ReviewKind.RELEASE || value === ReviewKind.ACCESS
 }
 
+export type ReviewListProps = {
+  kind: ReviewKindKeys
+  status: ReviewListStatusKeys
+}
+
 export interface FailedFileUpload {
   fileName: string
   error: string

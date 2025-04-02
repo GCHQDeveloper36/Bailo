@@ -7,15 +7,10 @@ import EmptyBlob from 'src/common/EmptyBlob'
 import Loading from 'src/common/Loading'
 import MessageAlert from 'src/MessageAlert'
 import ReviewItem from 'src/reviews/ReviewItem'
-import { ReviewListStatus, ReviewListStatusKeys, ReviewRequestInterface } from 'types/types'
+import { ReviewListProps, ReviewListStatus, ReviewRequestInterface } from 'types/types'
 
-type ReviewsListProps = {
-  kind: 'release' | 'access'
-  status: ReviewListStatusKeys
-}
-
-export default function ReviewsList({ kind, status }: ReviewsListProps) {
-  const { reviews, isReviewsLoading, isReviewsError } = useGetReviewRequestsForUser()
+export default function ReviewsList({ kind, status }: ReviewListProps) {
+  const { reviews, isReviewsLoading, isReviewsError } = useGetReviewRequestsForUser({ kind, status })
   const { responses, isResponsesLoading, isResponsesError } = useGetResponses(reviews.map((review) => review._id))
   const { currentUser, isCurrentUserLoading, isCurrentUserError } = useGetCurrentUser()
   const [filteredReviews, setFilteredReviews] = useState<ReviewRequestInterface[]>([])

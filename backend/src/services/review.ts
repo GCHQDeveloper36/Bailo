@@ -20,6 +20,41 @@ const requiredRoles = {
 
 export const allReviewRoles = [...new Set(requiredRoles.release.concat(requiredRoles.accessRequest))]
 
+export async function countReviews(
+  user: UserInterface,
+  mine: boolean,
+  modelId?: string,
+  semver?: string,
+  accessRequestId?: string,
+  kind?: string,
+  status?: string,
+): Promise<{ openReviews: number }> {
+  //TODO: filter by status
+  const reviews = await Review.aggregate()
+    .match({
+      ...(modelId && { modelId }),
+      ...(semver && { semver }),
+      ...(accessRequestId && { accessRequestId }),
+      ...(kind && { kind }),
+    })
+    .sort({ createdAt: -1 })
+    // Populate model entries
+    .lookup({ from: 'v2_models', localField: 'modelId', foreignField: 'id', as: 'model' })
+    // Populate model as value instead of array
+    .unwind({ path: '$model' })
+    .lookup({ from: 'v2_responses', localField: '_id', foreignField: 'parentId', as: 'response' })
+    .unwind({ path: '$response' })
+    .match({ ...(mine && (await findUserInCollaborators(user))) })
+
+  const auths = await authorisation.models(
+    user,
+    reviews.map((review) => review.model),
+    ModelAction.View,
+  )
+
+  return { openReviews: reviews.filter((_, i) => auths[i].success).length }
+}
+
 export async function findReviews(
   user: UserInterface,
   mine: boolean,
@@ -27,7 +62,9 @@ export async function findReviews(
   semver?: string,
   accessRequestId?: string,
   kind?: string,
+  status?: string,
 ): Promise<(ReviewInterface & { model: ModelInterface })[]> {
+  //TODO: filter by status
   const reviews = await Review.aggregate()
     .match({
       ...(modelId && { modelId }),
