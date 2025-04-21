@@ -60,6 +60,7 @@ import { getResponses } from './routes/v2/response/getResponses.js'
 import { patchResponse } from './routes/v2/response/patchResponse.js'
 import { patchResponseReaction } from './routes/v2/response/patchResponseReaction.js'
 import { getReviews } from './routes/v2/review/getReviews.js'
+import { getReviewSummary } from './routes/v2/review/getReviewSummary.js'
 import { postAccessRequestReviewResponse } from './routes/v2/review/postAccessRequestReviewResponse.js'
 import { postReleaseReviewResponse } from './routes/v2/review/postReleaseReviewResponse.js'
 import { deleteSchema } from './routes/v2/schema/deleteSchema.js'
@@ -171,6 +172,7 @@ server.patch('/api/v2/schema/:schemaId', ...patchSchema)
 server.delete('/api/v2/schema/:schemaId', ...deleteSchema)
 
 server.get('/api/v2/reviews', ...getReviews)
+server.get('/api/v2/reviews/summary', ...getReviewSummary)
 server.get('/api/v2/responses', ...getResponses)
 server.patch('/api/v2/response/:responseId', ...patchResponse)
 server.patch('/api/v2/response/:responseId/reaction/:kind', ...patchResponseReaction)

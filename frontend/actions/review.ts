@@ -5,6 +5,7 @@ import {
   DecisionKeys,
   EntryInterface,
   ReleaseInterface,
+  ReviewListProps,
   ReviewRequestInterface,
 } from 'types/types'
 
@@ -12,13 +13,47 @@ import { ErrorInfo, fetcher } from '../utils/fetcher'
 
 const emptyReviewList = []
 
-export function useGetReviewRequestsForUser() {
+export function useGetReviewsSummaryForUser(props?: Partial<ReviewListProps>) {
+  const { data, isLoading, error, mutate } = useSWR<
+    {
+      openReviews: number
+    },
+    ErrorInfo
+  >(
+    `/api/v2/reviews/summary?${
+      props
+        ? qs.stringify({
+            ...props,
+          })
+        : null
+    }`,
+    fetcher,
+  )
+
+  return {
+    mutateReviews: mutate,
+    openReviews: data ? data.openReviews : null,
+    isSummaryLoading: isLoading,
+    isSummaryError: error,
+  }
+}
+
+export function useGetReviewRequestsForUser(props?: Partial<ReviewListProps>) {
   const { data, isLoading, error, mutate } = useSWR<
     {
       reviews: ReviewRequestInterface[]
     },
     ErrorInfo
-  >('/api/v2/reviews', fetcher)
+  >(
+    `/api/v2/reviews?${
+      props
+        ? qs.stringify({
+            ...props,
+          })
+        : null
+    }`,
+    fetcher,
+  )
 
   return {
     mutateReviews: mutate,
