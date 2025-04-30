@@ -4,7 +4,7 @@ import authorisation from '../connectors/authorisation/index.js'
 import { AccessRequestDoc } from '../models/AccessRequest.js'
 import { CollaboratorEntry, ModelDoc, ModelInterface } from '../models/Model.js'
 import { ReleaseDoc } from '../models/Release.js'
-import Review, { ReviewDoc, ReviewInterface } from '../models/Review.js'
+import Review, { ReviewDoc, ReviewInterface, ReviewListStatusKeys } from '../models/Review.js'
 import { UserInterface } from '../models/User.js'
 import { ReviewKind, ReviewKindKeys } from '../types/enums.js'
 import { BadReq, InternalError, NotFound } from '../utils/error.js'
@@ -61,8 +61,10 @@ export async function findReviews(
   semver?: string,
   accessRequestId?: string,
   kind?: string,
+  _status?: ReviewListStatusKeys,
 ): Promise<(ReviewInterface & { model: ModelInterface })[]> {
   //TODO: filter by status
+
   const reviews = await Review.aggregate()
     .match({
       ...(modelId && { modelId }),
@@ -70,9 +72,60 @@ export async function findReviews(
       ...(accessRequestId && { accessRequestId }),
       ...(kind && { kind }),
     })
-    .sort({ createdAt: -1 })
-    // Populate model entries
-    .lookup({ from: 'v2_models', localField: 'modelId', foreignField: 'id', as: 'model' })
+    .group({
+      _id: {
+        semver: '$semver',
+        modelId: '$modelId',
+        kind: '$kind',
+        role: '$role',
+        model: '$model',
+      },
+      parentId: { $first: '$_id' },
+    })
+    .lookup({
+      from: 'v2_responses',
+      let: { parentId: '$parentId', role: '$_id.role' },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $and: [
+                {
+                  $eq: ['$parentId', '$$parentId'],
+                },
+                {
+                  $eq: ['$role', '$$role'],
+                },
+              ],
+            },
+          },
+        },
+        {
+          $sort: { updatedAt: -1 },
+        },
+        {
+          $limit: 1,
+        },
+      ],
+      as: 'responses',
+    })
+    .addFields({ responseExists: { $gt: [{ $size: '$responses' }, 0] } })
+    .group({
+      _id: {
+        semver: '$_id.semver',
+        modelId: '$_id.modelId',
+        kind: '$_id.kind',
+        model: '$_id.model',
+      },
+      roles: {
+        $push: {
+          role: '$_id.role',
+          responseExists: '$responseExists',
+          parentId: '$parentId',
+        },
+      },
+    })
+    .lookup({ from: 'v2_models', localField: '_id.modelId', foreignField: 'id', as: 'model' })
     // Populate model as value instead of array
     .unwind({ path: '$model' })
     .match({ ...(mine && (await findUserInCollaborators(user))) })
@@ -219,7 +272,7 @@ async function findUserInCollaborators(user: UserInterface) {
         {
           $size: {
             $filter: {
-              input: '$model.collaborators',
+              input: { $ifNull: ['$model.collaborators', []] },
               as: 'item',
               cond: {
                 $and: [

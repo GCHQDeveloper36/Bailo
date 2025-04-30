@@ -18,6 +18,12 @@ export interface ReviewInterface {
   updatedAt: Date
 }
 
+export const ReviewListStatus = {
+  OPEN: 'open',
+  ARCHIVED: 'archived',
+} as const
+export type ReviewListStatusKeys = (typeof ReviewListStatus)[keyof typeof ReviewListStatus]
+
 // The doc type includes all values in the plain interface, as well as all the
 // properties and functions that Mongoose provides.  If a function takes in an
 // object from Mongoose it should use this interface
