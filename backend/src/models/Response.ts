@@ -5,6 +5,8 @@ export const Decision = {
   RequestChanges: 'request_changes',
   Approve: 'approve',
   Undo: 'undo',
+  Deny: 'deny',
+  None: 'none',
 } as const
 export type DecisionKeys = (typeof Decision)[keyof typeof Decision]
 
