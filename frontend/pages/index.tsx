@@ -282,20 +282,22 @@ export default function Marketplace() {
                 />
               </FormControl>
               <Stack divider={<Divider flexItem />}>
-                <Box>
-                  <ChipSelector
-                    label='Sources'
-                    chipTooltipTitle={'Include external repostories'}
-                    options={peerList}
-                    expandThreshold={10}
-                    multiple
-                    selectedChips={selectedPeers}
-                    onChange={handlePeersOnChange}
-                    size='small'
-                    ariaLabel='add peer to search filter'
-                    accordion
-                  />
-                </Box>
+                {peerList && peerList.length > 0 && (
+                  <Box>
+                    <ChipSelector
+                      label='Sources'
+                      chipTooltipTitle={'Include external repostories'}
+                      options={peerList}
+                      expandThreshold={10}
+                      multiple
+                      selectedChips={selectedPeers}
+                      onChange={handlePeersOnChange}
+                      size='small'
+                      ariaLabel='add peer to search filter'
+                      accordion
+                    />
+                  </Box>
+                )}
                 <Box>
                   <ChipSelector
                     label='Organisations'
