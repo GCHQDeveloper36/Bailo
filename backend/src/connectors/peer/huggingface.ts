@@ -13,7 +13,7 @@ interface ExtraConfig {
 export class HuggingFaceHubConnector extends BasePeerConnector {
   getExtraConfig(): ExtraConfig {
     const extra = this.config.extra
-    if (!Object.hasOwn(extra, 'statusModelId') || !Object.hasOwn(extra, 'statusModelName')) {
+    if (!extra || !Object.hasOwn(extra, 'statusModelId') || !Object.hasOwn(extra, 'statusModelName')) {
       throw ConfigurationError(`Missing configuration for HuggingFaceHub ${this.id}`)
     }
     return this.config.extra as ExtraConfig
