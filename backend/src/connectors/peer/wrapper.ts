@@ -1,3 +1,4 @@
+import { ModelInterface } from '../../models/Model.js'
 import { ModelSearchResult } from '../../routes/v2/model/getModelsSearch.js'
 import { PeerConfigStatus } from '../../types/types.js'
 import { InternalError } from '../../utils/error.js'
@@ -34,6 +35,15 @@ export class PeerConnectorWrapper {
     }
 
     return results
+  }
+
+  async getModel(id: string, peerId: string): Promise<ModelInterface | null> {
+    const peer = this.peers.get(peerId)
+    if (!peer) {
+      throw InternalError(`Peer connector not found: ${peerId}`)
+    }
+
+    return peer.getModel(id)
   }
 
   async queryModels(

@@ -5,7 +5,7 @@ import authentication from '../connectors/authentication/index.js'
 import { ModelAction, ModelActionKeys, ReleaseAction } from '../connectors/authorisation/actions.js'
 import authorisation from '../connectors/authorisation/index.js'
 import getPeerConnectors from '../connectors/peer/index.js'
-import ModelModel, { CollaboratorEntry, EntryKindKeys } from '../models/Model.js'
+import ModelModel, { CollaboratorEntry, EntryKindKeys, ModelDoc } from '../models/Model.js'
 import Model, { ModelInterface } from '../models/Model.js'
 import ModelCardRevisionModel, { ModelCardRevisionDoc } from '../models/ModelCardRevision.js'
 import { UserInterface } from '../models/User.js'
@@ -76,21 +76,27 @@ export async function createModel(user: UserInterface, modelParams: CreateModelP
   return model
 }
 
+export async function getRemoteModelById(_user: UserInterface, namespace: string, modelId: string, peerId: string) {
+  const peers = await getPeerConnectors()
+  const model = (await peers.getModel(namespace + '/' + modelId, peerId)) as ModelDoc
+  if (!model) {
+    throw NotFound(`The requested entry was not found.`, { modelId })
+  }
+  return model
+}
+
 export async function getModelById(user: UserInterface, modelId: string, kind?: EntryKindKeys) {
   const model = await Model.findOne({
     id: modelId,
     ...(kind && { kind }),
   })
-
   if (!model) {
     throw NotFound(`The requested entry was not found.`, { modelId })
   }
-
   const auth = await authorisation.model(user, model, ModelAction.View)
   if (!auth.success) {
     throw Forbidden(auth.info, { userDn: user.dn, modelId })
   }
-
   return model
 }
 

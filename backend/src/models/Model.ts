@@ -76,6 +76,8 @@ export interface ModelInterface {
 
   createdAt: Date
   updatedAt: Date
+
+  peerId?: string
 }
 
 // The doc type includes all values in the plain interface, as well as all the

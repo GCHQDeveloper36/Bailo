@@ -1,5 +1,6 @@
 import { HubApiError, listModels, modelInfo } from '@huggingface/hub'
 
+import { ModelInterface } from '../../models/Model.js'
 import { ModelSearchResult } from '../../routes/v2/model/getModelsSearch.js'
 import { SystemStatus } from '../../types/types.js'
 import { ConfigurationError } from '../../utils/error.js'
@@ -66,24 +67,70 @@ export class HuggingFaceHubConnector extends BasePeerConnector {
     if (opts.query.length < 5) {
       return models
     }
+
     for await (const model of listModels({
       search: { query: opts.query },
       limit: 100,
-      additionalFields: ['tags', 'cardData', 'createdAt', 'author'],
+      additionalFields: ['tags', 'cardData', 'createdAt', 'author', 'downloadsAllTime'],
     })) {
-      models.push({
-        id: model.id,
-        name: model.name,
-        description: model.task || '',
-        tags: model.tags || [],
-        kind: 'model',
-        organisation: model.author,
-        createdAt: new Date(model.createdAt),
-        updatedAt: model.updatedAt,
-        peerId: this.getId(),
-        collaborators: [],
-      })
+      models.push(this.mapToResult(model))
     }
     return Promise.resolve(models)
+  }
+
+  mapToResult(modelInfo): ModelSearchResult {
+    return {
+      id: modelInfo.name,
+      name: modelInfo.name,
+      description: modelInfo.task || '',
+      tags: modelInfo.tags || [],
+      kind: 'model',
+      organisation: modelInfo.author,
+      createdAt: new Date(modelInfo.createdAt),
+      updatedAt: modelInfo.updatedAt,
+      peerId: this.getId(),
+      collaborators: [],
+    }
+  }
+
+  mapToInterface(modelInfo): ModelInterface {
+    return {
+      id: modelInfo.name,
+      name: modelInfo.name,
+      description: modelInfo.task || '',
+      visibility: 'public',
+      deleted: false,
+      state: '',
+      settings: {
+        allowTemplating: false,
+        mirror: {},
+        ungovernedAccess: false,
+      },
+      card: {
+        createdBy: modelInfo.author,
+        version: 1,
+        schemaId: 'huggingface',
+        metadata: {
+          overview: {
+            tags: modelInfo.tags,
+            rawCard: JSON.stringify(modelInfo.cardData),
+          },
+        },
+      },
+      kind: 'model',
+      organisation: modelInfo.author,
+      createdAt: new Date(modelInfo.createdAt),
+      updatedAt: modelInfo.updatedAt,
+      peerId: this.getId(),
+      collaborators: [],
+    }
+  }
+
+  async getModel(modelId: string): Promise<ModelInterface> {
+    // do something
+    const model = await modelInfo({
+      name: modelId,
+    })
+    return this.mapToInterface(model)
   }
 }

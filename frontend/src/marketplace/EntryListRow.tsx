@@ -28,6 +28,8 @@ export default function EntryListRow({
   const theme = useTheme()
   const entry = data[index]
 
+  const href = entry.peerId ? `${entry.kind}/${entry.peerId}/${entry.id}` : `${entry.kind}/${entry.id}`
+
   return (
     <Box
       justifyContent='flex-start'
@@ -43,7 +45,7 @@ export default function EntryListRow({
       <Stack spacing={1}>
         <Link
           sx={{ textDecoration: 'none', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
-          href={`${entry.kind}/${entry.id}`}
+          href={href}
         >
           <Typography
             variant='h5'

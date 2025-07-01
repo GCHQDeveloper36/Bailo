@@ -29,6 +29,7 @@ import { postStartMultipartUpload } from './routes/v2/model/file/postStartMultip
 import { getModel } from './routes/v2/model/getModel.js'
 import { getModelCurrentUserPermissions } from './routes/v2/model/getModelCurrentUserPermissions.js'
 import { getModelsSearch } from './routes/v2/model/getModelsSearch.js'
+import { getRemoteModel } from './routes/v2/model/getRemoteModel.js'
 import { getImages } from './routes/v2/model/images/getImages.js'
 import { getInference } from './routes/v2/model/inferencing/getInferenceService.js'
 import { getInferences } from './routes/v2/model/inferencing/getInferenceServices.js'
@@ -99,6 +100,7 @@ server.get('/api/v2/models/search', ...getModelsSearch)
 // server.post('/api/v2/models/import', ...postModelImport)
 
 server.get('/api/v2/model/:modelId', ...getModel)
+server.get('/api/v2/model/remote/:peerId/:namespace/:modelId', ...getRemoteModel)
 server.patch('/api/v2/model/:modelId', ...patchModel)
 
 server.post('/api/v2/model/:modelId/export/s3', ...postRequestExportToS3)

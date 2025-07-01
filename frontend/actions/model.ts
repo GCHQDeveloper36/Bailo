@@ -70,6 +70,27 @@ export function useListModels(
   }
 }
 
+export function useGetRemoteModel(id: string | undefined, kind: EntryKindKeys, peerId?: string) {
+  const queryParams = {
+    kind,
+    peerId,
+  }
+
+  const { data, isLoading, error, mutate } = useSWR<
+    {
+      model: EntryInterface
+    },
+    ErrorInfo
+  >(id ? `/api/v2/model/remote/${peerId}/${id}?${qs.stringify(queryParams)}` : null, fetcher)
+
+  return {
+    mutateModel: mutate,
+    model: data?.model,
+    isModelLoading: isLoading,
+    isModelError: error,
+  }
+}
+
 export function useGetModel(id: string | undefined, kind: EntryKindKeys) {
   const queryParams = {
     kind,
