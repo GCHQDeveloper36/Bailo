@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.13.2-bookworm AS sphinx-docs
+FROM python:3.13.5-bookworm AS sphinx-docs
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -12,27 +12,24 @@ WORKDIR /app/docs
 
 COPY docs .
 
-RUN --mount=type=cache,target=/root/.cache/pip pip install --upgrade bailo -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip pip install bailo -r requirements.txt
 
 RUN make dirhtml
 
-FROM node:24.4.0-alpine AS base
-
-RUN apk add --no-cache libc6-compat ca-certificates
-RUN apk update
+FROM bailo-base:latest AS base
 
 WORKDIR /app
 
-COPY --from=sphinx-docs /app/docs/python-docs python-docs
+COPY --from=sphinx-docs --chown=node:node /app/docs/python-docs python-docs
 COPY package*.json ./
-RUN --mount=type=cache,target=/cache/npm npm install --omit=dev --cache=/cache/npm
+RUN --mount=type=cache,target=/cache/npm npm ci --omit=dev --cache=/cache/npm
 
 EXPOSE 3001
 
 FROM base AS dev
 
 # Pickup dev packages too
-RUN --mount=type=cache,target=/cache/npm npm install --cache=/cache/npm
+RUN --mount=type=cache,target=/cache/npm npm ci --cache=/cache/npm
 
 COPY . .
 
@@ -42,13 +39,16 @@ CMD [ "npm", "run", "dev" ]
 
 FROM dev AS build
 
-WORKDIR /app
 RUN npm run build
 
 FROM base AS prod
 ENV NODE_ENV=production
 
-COPY --from=build /app/config config
-COPY --from=build /app/dist .
+COPY --from=build --chown=node:node /app/config config
+COPY --from=build --chown=node:node /app/dist .
+
+RUN chown node:node /app && chmod -R g=u /app
+
+USER node
 
 CMD ["node", "src/index.js"]

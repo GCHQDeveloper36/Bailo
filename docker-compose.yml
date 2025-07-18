@@ -89,6 +89,13 @@ services:
       - ./backend/config/registry.conf:/etc/distribution/config.yml
       - ./backend/certs:/certs
 
+  base:
+    scale: 0
+    build:
+      context: ./lib/base/
+      tags:
+        - bailo_base:latest
+
   frontend:
     build:
       context: ./frontend/

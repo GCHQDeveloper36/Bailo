@@ -7,9 +7,36 @@ on:
     branches: [main]
 
 jobs:
+  build_base_images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # Clone repository
+      - uses: actions/checkout@v4
+
+      # Setup BuildX
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build ${{ matrix.component.name }} image
+        uses: docker/build-push-action@v6
+        with:
+          context: lib/base
+          tags: bailo_base:latest
+          cache-from: type=gha,scope=base
+          cache-to: type=gha,mode=max,scope=base
+          outputs: type=docker,dest=/tmp/bailo_base.tar
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bailo_base
+          path: /tmp/bailo_base.tar
+
   build_images:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: build_base_images
 
     strategy:
       matrix:
