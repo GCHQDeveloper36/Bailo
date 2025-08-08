@@ -110,6 +110,10 @@ services:
     image: bailo_frontend:${INSTANCE_NAME}
     build:
       context: ./frontend/
+      target: dev
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
     depends_on:
       - backend
 
@@ -125,6 +129,7 @@ services:
       - ./backend/certs:/certs
       - ./backend/certs:/usr/local/share/ca-certificates
       - ./backend/config:/app/config
+      - backend_node_modules:/app/node_modules
     depends_on:
       clamd:
         condition: service_healthy
@@ -147,9 +152,12 @@ volumes:
     name: ${INSTANCE_NAME}_minioVolume
   mongoVolume:
     name: ${INSTANCE_NAME}_mongoVolume
+  frontend_node_modules:
+  backend_node_modules:
 
 networks:
   default:
     name: ${INSTANCE_NAME}_default
   internal:
     name: ${INSTANCE_NAME}_internal
+
