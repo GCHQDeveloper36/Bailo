@@ -1,29 +1,69 @@
-import eslint from '@eslint/js'
-import { defineConfig, globalIgnores } from 'eslint/config'
-import nextVitals from 'eslint-config-next/core-web-vitals'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+import { defineConfig } from 'eslint/config'
+import { fixupConfigRules, fixupPluginRules } from '@eslint/compat'
+import { FlatCompat } from '@eslint/eslintrc'
+import js from '@eslint/js'
+import typescriptEslint from '@typescript-eslint/eslint-plugin'
+import tsParser from '@typescript-eslint/parser'
 import pluginCypress from 'eslint-plugin-cypress'
 import prettier from 'eslint-plugin-prettier'
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
-import tseslint from 'typescript-eslint'
+import reactPlugin from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
+import eslintPluginNext from 'eslint-plugin-next'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
+})
 
 export default defineConfig([
+  ...compat.config({
+    extends: ['next', 'next/core-web-vitals'],
+    settings: {
+      next: {
+        rootDir: 'frontend/',
+      },
+    },
+  }),
   {
     ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts'],
   },
-  eslint.configs.recommended,
-  tseslint.configs.recommended,
-  react.configs.flat.recommended,
-  react.configs.flat['jsx-runtime'],
-  reactHooks.configs.flat.recommended,
-  ...nextVitals,
+  // ...fixupConfigRules(
+  //   compat.extends(
+  //     'eslint:recommended',
+  //     'plugin:@typescript-eslint/eslint-recommended',
+  //     'plugin:@typescript-eslint/recommended',
+  //     'plugin:react/recommended',
+  //     'plugin:react/jsx-runtime',
+  //     // 'plugin:react-hooks/recommended',
+  //     // 'next/core-web-vitals',
+  //   ),
+  // ),
   {
+    files: ['**/*.{js,jsx,ts,tsx}'],
     plugins: {
+      react: reactPlugin,
+      'eslint-plugin-next': eslintPluginNext,
+      'react-hooks': reactHooks,
+      '@typescript-eslint': fixupPluginRules(typescriptEslint),
       prettier,
       'simple-import-sort': simpleImportSort,
     },
+    //extends: ['react/recommended', 'react/jsx-runtime'],
+    languageOptions: {
+      parser: tsParser,
+    },
+
     rules: {
+      ...reactHooks.configs.recommended.rules,
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
@@ -58,5 +98,4 @@ export default defineConfig([
       'func-names': 'off',
     },
   },
-  globalIgnores(['.node_modules/*', '.next/*']),
 ])
