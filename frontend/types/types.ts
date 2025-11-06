@@ -87,6 +87,8 @@ export interface FileInterface {
 
   path: string
 
+  directory?: string
+
   complete: boolean
 
   // Older files may not have AV run against them
@@ -623,6 +625,7 @@ export type FileUploadWithMetadata = {
 export type FileUploadMetadata = {
   tags: string[]
   text: string
+  directory: string
 }
 
 export interface ReviewRoleInterface {

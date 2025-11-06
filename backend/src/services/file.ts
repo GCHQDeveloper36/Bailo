@@ -30,6 +30,7 @@ export function isFileInterfaceDoc(data: unknown): data is FileInterfaceDoc {
     !('size' in data) ||
     !('mime' in data) ||
     !('path' in data) ||
+    !('directory' in data) ||
     !('complete' in data) ||
     !('deleted' in data) ||
     !('createdAt' in data) ||
@@ -52,6 +53,7 @@ export async function uploadFile(
   mime: string,
   stream: Readable,
   tags?: string[],
+  directory?: string,
 ) {
   const model = await getModelById(user, modelId)
   if (model.settings.mirror.sourceModelId) {
@@ -62,7 +64,7 @@ export async function uploadFile(
 
   const path = createFilePath(modelId, fileId)
 
-  const file: FileInterfaceDoc = new FileModel({ modelId, name, mime, path, complete: true })
+  const file: FileInterfaceDoc = new FileModel({ modelId, name, mime, path, complete: true, directory })
 
   const auth = await authorisation.file(user, model, file, FileAction.Upload)
   if (!auth.success) {
@@ -329,7 +331,7 @@ export async function updateFile(
   user: UserInterface,
   modelId: string,
   fileId: string,
-  patchFileParams: Partial<Pick<FileInterface, 'tags' | 'name' | 'mime'>>,
+  patchFileParams: Partial<Pick<FileInterface, 'tags' | 'name' | 'mime' | 'directory'>>,
 ) {
   let file: FileWithScanResultsInterface
   try {

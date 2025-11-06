@@ -34,6 +34,7 @@ export async function postFileForModelId(
   const queryParams = {
     ...(metadata && metadata.text && { metadataText: metadata.text }),
     ...(metadata && metadata.tags.length > 0 && { tags: metadata.tags }),
+    ...(metadata && metadata.directory && { directory: metadata.directory }),
   }
   const fileResponse = await axios
     .post(

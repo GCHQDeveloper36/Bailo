@@ -16,6 +16,8 @@ export interface FileInterface {
 
   path: string
 
+  directory: string
+
   complete: boolean
 
   tags: string[]
@@ -40,6 +42,8 @@ const FileSchema = new Schema<FileInterfaceDoc>(
     mime: { type: String, required: true },
 
     path: { type: String, required: true },
+
+    directory: { type: String, required: false },
 
     tags: [{ type: String }],
 
