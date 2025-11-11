@@ -6,6 +6,8 @@ module.exports = {
 
   mongo: {
     uri: 'mongodb://mongo:27017/bailo',
+    // DocumentDB
+    //uri: 'mongodb://bailoadmin:bailoadmin@docdb:27017/bailo?tls=true&tlsAllowInvalidCertificates=true',
   },
 
   app: {

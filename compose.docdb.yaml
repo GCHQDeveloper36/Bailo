@@ -1,0 +1,12 @@
+services:
+  docdb:
+    image: ghcr.io/documentdb/documentdb/documentdb-local:18978229970-2025-10-31-amd64
+    networks:
+      internal:
+        aliases:
+          - mongo
+    command: --username bailoadmin --password bailoadmin
+    volumes:
+      - mongoVolume:/data
+    ports:
+      - 27017:27017
