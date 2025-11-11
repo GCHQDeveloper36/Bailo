@@ -39,11 +39,18 @@ services:
     build:
       target: dev
 
-  minio:
+  s3:
+    networks:
+      default:
+    ports:
+      - 9000:9000
+      - 9001:9001
     environment:
-      MINIO_BROWSER_REDIRECT_URL: http://localhost:8080/minio/ui/
-      MINIO_SERVER_URL: http://minio:9000
-      MINIO_SKIP_CLIENT: yes
+      - RUSTFS_CONSOLE_ADDRESS=0.0.0.0:9001
+      - RUSTFS_EXTERNAL_ADDRESS=:9000
+      - RUSTFS_ACCESS_KEY=s3admin
+      - RUSTFS_SECRET_KEY=s3admin
+      - RUSTFS_CONSOLE_ENABLE=true
 
 networks:
   debug:

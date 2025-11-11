@@ -15,7 +15,7 @@ const config: PartialDeep<Config> = {
       accessKeyId: '',
       secretAccessKey: '',
     },
-    endpoint: 'http://minio:9000',
+    endpoint: 'http://s3:9000',
     region: 'ignored',
     forcePathStyle: true,
     rejectUnauthorized: true,

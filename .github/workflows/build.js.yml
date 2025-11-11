@@ -384,9 +384,9 @@ jobs:
         run: |
           cat <<EOT >> backend/config/local.cjs
           module.exports = {
-            minio: {
-              accessKey: 'minioadmin',
-              secretKey: 'minioadmin',
+            s3: {
+              accessKey: 's3admin',
+              secretKey: 's3admin',
             },
 
             smtp: {

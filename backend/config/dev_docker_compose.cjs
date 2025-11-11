@@ -18,7 +18,7 @@ module.exports = {
   },
 
   httpClient: {
-    noProxy: ['localhost', '127.0.0.1', 'registry', 'minio'],
+    noProxy: ['localhost', '127.0.0.1', 'registry', 's3'],
     defaultOpts: {
       rejectUnauthorized: false,
     },
@@ -26,10 +26,10 @@ module.exports = {
 
   s3: {
     credentials: {
-      accessKeyId: 'minioadmin',
-      secretAccessKey: 'minioadmin',
+      accessKeyId: 's3admin',
+      secretAccessKey: 's3admin',
     },
-    endpoint: 'http://minio:9000',
+    endpoint: 'http://s3:9000',
     region: 'ignored',
     forcePathStyle: true,
     rejectUnauthorized: true,

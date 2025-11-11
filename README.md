@@ -149,15 +149,15 @@ deploy Bailo.
 
 ### Service Ports
 
-| Service    | Host  | Notes                 |
-| ---------- | ----- | --------------------- |
-| Next UI    | 3000  | Stored in `frontend`  |
-| NodeJS App | 3001  | Stored in `backend`   |
-| Mongo      | 27017 | No credentials        |
-| Registry   | 5000  | HTTPS only, no UI     |
-| Minio UI   | 9001  | minioadmin:minioadmin |
-| Minio      | 9000  | minioadmin:minioadmin |
-| MailCrab   | 1080  | Fake email server     |
+| Service    | Host  | Notes                |
+| ---------- | ----- | -------------------- |
+| Next UI    | 3000  | Stored in `frontend` |
+| NodeJS App | 3001  | Stored in `backend`  |
+| Mongo      | 27017 | No credentials       |
+| Registry   | 5000  | HTTPS only, no UI    |
+| RustFS     | 9000  | s3admin:s3admin      |
+| RustFS UI  | 9001  | s3admin:s3admin      |
+| MailCrab   | 1080  | Fake email server    |
 
 \*\* Note: these credentials are intentionally basic/default, but in your own instances we recommend changing them to
 something more secure.

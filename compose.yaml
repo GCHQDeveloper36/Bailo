@@ -16,22 +16,33 @@ services:
     ports:
       - 27017:27017
 
-  minio:
-    image: bitnamilegacy/minio:2025.7.23
+  s3:
+    image: rustfs/rustfs:1.0.0-alpha.67
     networks:
       internal:
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      - RUSTFS_ADDRESS=0.0.0.0:9000
     volumes:
-      - minioVolume:/bitnami/minio
+      - s3DataVolume:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "sh",
+          "-c",
+          "curl -f http://localhost:9000/health && curl -f http://localhost:9001/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   clamd:
     image: clamav/clamav:1.4.3_base
     networks:
       internal:
     healthcheck:
-      test: ['CMD-SHELL', "echo 'PING' | nc -w 5 localhost 3310"]
+      test: ["CMD-SHELL", "echo 'PING' | nc -w 5 localhost 3310"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -45,7 +56,7 @@ services:
     volumes:
       - ./lib/modelscan_api/bailo_modelscan_api:/app/bailo_modelscan_api
     healthcheck:
-      test: ['CMD-SHELL', 'curl --fail http://127.0.0.1:3311/info || exit 1']
+      test: ["CMD-SHELL", "curl --fail http://127.0.0.1:3311/info || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -71,8 +82,8 @@ services:
       REGISTRY_HTTP_TLS_CERTIFICATE: /certs/cert.pem
       REGISTRY_HTTP_TLS_KEY: /certs/key.pem
 
-      REGISTRY_STORAGE_S3_ACCESSKEY: minioadmin
-      REGISTRY_STORAGE_S3_SECRETKEY: minioadmin
+      REGISTRY_STORAGE_S3_ACCESSKEY: s3admin
+      REGISTRY_STORAGE_S3_SECRETKEY: s3admin
 
       REGISTRY_AUTH: token
       REGISTRY_AUTH_TOKEN_REALM: http://backend:3001/api/v1/registry_auth
@@ -112,8 +123,8 @@ services:
         condition: service_started
       modelscan:
         condition: service_healthy
-      minio:
-        condition: service_started
+      s3:
+        condition: service_healthy
       mongo:
         condition: service_started
     security_opt:
@@ -123,8 +134,8 @@ services:
       - NODE_CONFIG_ENV=${INSTANCE_NAME}_docker_compose
 
 volumes:
-  minioVolume:
-    name: ${INSTANCE_NAME}_minioVolume
+  s3DataVolume:
+    name: ${INSTANCE_NAME}_s3DataVolume
   mongoVolume:
     name: ${INSTANCE_NAME}_mongoVolume
 
