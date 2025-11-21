@@ -56,14 +56,12 @@ export default function EntryListRow({
   // Link to view this entry, defaults to 'this' instance
   let href = `${entryKindForRedirect}/${entry.id}`
 
-  // Handle the case where the entry must be viewed on a different peer
   const peerId = entry.peerId
-  const isExternal = peerId !== undefined
+  const isExternal = peerId !== undefined && peers && peers.has(peerId)
 
-  if (isExternal && peers && peers.has(peerId)) {
+  if (isExternal) {
     const peer = peers.get(peerId)
     if (peer) {
-      // Override link for peer URL
       href = getEntryUrl(peer.config, entry)
     }
   }
@@ -84,7 +82,6 @@ export default function EntryListRow({
         <Link
           sx={{ textDecoration: 'none', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
           href={href}
-          target={isExternal ? '_blank' : '_self'}
         >
           <Stack spacing={1} justifyContent='space-between' alignItems='center' direction='row'>
             <Typography

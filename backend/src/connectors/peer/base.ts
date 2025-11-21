@@ -1,5 +1,6 @@
 import NodeCache from 'node-cache'
 
+import { EntryKindKeys, ExternalModelInterface } from '../../models/Model.js'
 import { UserInterface } from '../../models/User.js'
 import { getHttpsAgent } from '../../services/http.js'
 import {
@@ -78,6 +79,8 @@ export abstract class BasePeerConnector {
   abstract getPeerStatus(): Promise<SystemStatus>
 
   abstract searchEntries(user: UserInterface, opts: EntrySearchOptionsParams): Promise<EntrySearchResultWithErrors>
+
+  abstract getEntry(user: UserInterface, id: string, kind?: EntryKindKeys): Promise<ExternalModelInterface>
 
   /**
    * Provide a formatted key of: `peerId:userDn:key`

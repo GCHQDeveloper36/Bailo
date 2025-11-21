@@ -1,6 +1,6 @@
 import { HubApiError, listModels, modelInfo } from '@huggingface/hub'
 
-import { EntryVisibility } from '../../models/Model.js'
+import { EntryKindKeys, EntryVisibility, ExternalModelInterface } from '../../models/Model.js'
 import { UserInterface } from '../../models/User.js'
 import log from '../../services/log.js'
 import {
@@ -9,7 +9,7 @@ import {
   EntrySearchResultWithErrors,
   SystemStatus,
 } from '../../types/types.js'
-import { BadReq, ConfigurationError, NotImplemented } from '../../utils/error.js'
+import { BadReq, ConfigurationError, NotFound, NotImplemented } from '../../utils/error.js'
 import { BasePeerConnector } from './base.js'
 
 interface ExtraConfig {
@@ -157,5 +157,43 @@ export class HuggingFaceHubConnector extends BasePeerConnector {
       cache.set(cacheKey, models)
     }
     return Promise.resolve({ models })
+  }
+
+  async getEntry(user: UserInterface, id: string, kind?: EntryKindKeys): Promise<ExternalModelInterface> {
+    let model
+    try {
+      model = await modelInfo({
+        name: decodeURIComponent(id),
+        additionalFields: ['tags', 'cardData', 'createdAt', 'author'],
+      })
+    } catch (err) {
+      if ((err as HubApiError).statusCode === 404) {
+        throw NotFound('Entry not found on HuggingFace', {
+          id,
+          kind,
+          err,
+        })
+      } else {
+        throw BadReq("Entry couldn't be returned from HuggingFace", { err })
+      }
+    }
+
+    return {
+      id: model.id,
+      name: model.name,
+      description: model.task || '',
+      tags: model.tags || [],
+      kind: 'model',
+      organisation: model.author,
+      createdAt: new Date(model.createdAt),
+      updatedAt: model.updatedAt,
+      collaborators: [],
+      visibility: model.private ? EntryVisibility.Private : EntryVisibility.Public,
+      settings: {
+        allowTemplating: false,
+        ungovernedAccess: false,
+        mirror: {},
+      },
+    }
   }
 }

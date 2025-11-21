@@ -1,6 +1,8 @@
 import fetch, { Response } from 'node-fetch'
 
+import { EntryKindKeys, ExternalModelInterface } from '../../models/Model.js'
 import { UserInterface } from '../../models/User.js'
+import { GetModelResponse } from '../../routes/v2/model/getModel.js'
 import { isBailoError } from '../../types/error.js'
 import { EntrySearchOptionsParams, EntrySearchResultWithErrors, SystemStatus } from '../../types/types.js'
 import config from '../../utils/config.js'
@@ -14,6 +16,11 @@ const emptyPing: SystemStatus = {
 export class BailoPeerConnector extends BasePeerConnector {
   init() {
     return Promise.resolve(true)
+  }
+
+  async getEntry(user: UserInterface, id: string, kind?: EntryKindKeys): Promise<ExternalModelInterface> {
+    const entryResponse = await this.request<GetModelResponse>(`/api/v2/model/${id}?kind=${kind}`)
+    return entryResponse.model
   }
 
   async searchEntries(_user: UserInterface, opts: EntrySearchOptionsParams): Promise<EntrySearchResultWithErrors> {

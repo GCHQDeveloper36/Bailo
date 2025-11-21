@@ -29,7 +29,7 @@ interface GetPeerStatusResponse {
   peers: any
 }
 
-export const getPeerStatus = [
+export const getPeersStatus = [
   async (req: Request, res: Response<GetPeerStatusResponse>): Promise<void> => {
     const _ = parse(req, getPeerStatusSchema)
 

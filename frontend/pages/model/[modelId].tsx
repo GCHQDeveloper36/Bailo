@@ -19,10 +19,15 @@ import { getCurrentUserRoles } from 'utils/roles'
 
 export default function Model() {
   const router = useRouter()
-  const { modelId: entryId }: { modelId?: string } = router.query
-  const { entry, isEntryLoading, isEntryError, mutateEntry } = useGetEntry(entryId)
+  const { modelId: entryId, peerId }: { modelId?: string; peerId?: string } = router.query
+  const { entry, isEntryLoading, isEntryError, mutateEntry } = useGetEntry(entryId, undefined, peerId)
   const { currentUser, isCurrentUserLoading, isCurrentUserError } = useGetCurrentUser()
   const { uiConfig, isUiConfigLoading, isUiConfigError } = useGetUiConfig()
+
+  const externalModel = !!peerId
+  const mirroredModel = !!entry?.settings.mirror?.sourceModelId
+
+  const readOnly = externalModel || mirroredModel
 
   const { userPermissions } = useContext(UserPermissionsContext)
 
@@ -37,20 +42,12 @@ export default function Model() {
             {
               title: 'Overview',
               path: 'overview',
-              view: (
-                <Overview entry={entry} readOnly={!!entry.settings.mirror?.sourceModelId} mutateEntry={mutateEntry} />
-              ),
+              view: <Overview entry={entry} readOnly={readOnly} mutateEntry={mutateEntry} />,
             },
             {
               title: 'Releases',
               path: 'releases',
-              view: (
-                <Releases
-                  model={entry}
-                  currentUserRoles={currentUserRoles}
-                  readOnly={!!entry.settings.mirror?.sourceModelId}
-                />
-              ),
+              view: <Releases model={entry} currentUserRoles={currentUserRoles} readOnly={readOnly} />,
               disabled: !entry.card,
               disabledText: 'Select a schema to view this tab',
             },
@@ -65,7 +62,7 @@ export default function Model() {
             {
               title: 'Registry',
               path: 'registry',
-              view: <ModelImages model={entry} readOnly={!!entry.settings.mirror?.sourceModelId} />,
+              view: <ModelImages model={entry} readOnly={readOnly} />,
             },
             {
               title: 'File management',
@@ -87,7 +84,15 @@ export default function Model() {
             },
           ]
         : [],
-    [entry, uiConfig, currentUserRoles, settingsPermission.hasPermission, settingsPermission.info, mutateEntry],
+    [
+      entry,
+      uiConfig,
+      currentUserRoles,
+      settingsPermission.hasPermission,
+      settingsPermission.info,
+      mutateEntry,
+      readOnly,
+    ],
   )
 
   function requestAccess() {

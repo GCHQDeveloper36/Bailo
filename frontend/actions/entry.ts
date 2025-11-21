@@ -82,9 +82,10 @@ export function useListEntries(
   }
 }
 
-export function useGetEntry(entryId: string | undefined, kind?: EntryKindKeys) {
+export function useGetEntry(entryId: string | undefined, kind?: EntryKindKeys, peerId?: string) {
   const queryParams = {
     ...(kind && { kind }),
+    ...(peerId && { peerId }),
   }
 
   const { data, isLoading, error, mutate } = useSWR<
@@ -92,7 +93,7 @@ export function useGetEntry(entryId: string | undefined, kind?: EntryKindKeys) {
       model: EntryInterface
     },
     ErrorInfo
-  >(entryId ? `/api/v2/model/${entryId}?${qs.stringify(queryParams)}` : null, fetcher)
+  >(entryId ? `/api/v2/model/${encodeURIComponent(entryId)}?${qs.stringify(queryParams)}` : null, fetcher)
 
   return {
     mutateEntry: mutate,

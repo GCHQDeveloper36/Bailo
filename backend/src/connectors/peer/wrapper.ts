@@ -1,3 +1,4 @@
+import { EntryKindKeys, ExternalModelInterface } from '../../models/Model.js'
 import { UserInterface } from '../../models/User.js'
 import { EntrySearchOptionsParams, EntrySearchResultWithErrors, PeerConfigStatus } from '../../types/types.js'
 import { InternalError } from '../../utils/error.js'
@@ -8,8 +9,36 @@ export class PeerConnectorWrapper {
   peerIds: Array<string>
 
   constructor(peers: Map<string, BasePeerConnector>) {
-    this.peers = peers
+    this.peers = new Map(peers)
     this.peerIds = Array.from(peers.keys())
+  }
+
+  private getPeersOrThrow(ids: Array<string>): Array<[string, BasePeerConnector]> {
+    const resolved: Array<[string, BasePeerConnector]> = []
+    const missing: string[] = []
+
+    for (const id of ids) {
+      const peer = this.peers.get(id)
+      if (!peer) {
+        missing.push(id)
+      } else {
+        resolved.push([id, peer])
+      }
+    }
+
+    if (missing.length) {
+      throw InternalError('Invalid peer IDs provided', { ids: missing })
+    }
+
+    return resolved
+  }
+
+  private getPeerOrThrow(id: string): BasePeerConnector {
+    const peer = this.peers.get(id)
+    if (!peer) {
+      throw InternalError('Invalid peer ID provided', { id })
+    }
+    return peer
   }
 
   async init() {
@@ -17,12 +46,8 @@ export class PeerConnectorWrapper {
   }
 
   async status(peersToQuery: Array<string> = this.peerIds): Promise<Map<string, PeerConfigStatus>> {
-    if (!peersToQuery.every((q) => this.peers.has(q))) {
-      throw InternalError('Invalid peer IDs provided to wrapper')
-    }
     const entries = await Promise.all(
-      peersToQuery.map(async (id) => {
-        const peer = this.peers.get(id)!
+      this.getPeersOrThrow(peersToQuery).map(async ([id, peer]) => {
         return [
           id,
           {
@@ -42,15 +67,18 @@ export class PeerConnectorWrapper {
     if (!opts.peers) {
       return []
     }
-    if (!opts.peers.every((q) => this.peers.has(q))) {
-      throw InternalError('Invalid peer IDs provided to wrapper')
-    }
     const results = await Promise.all(
-      opts.peers.map((id) => {
-        const peer = this.peers.get(id)!
-        return peer.searchEntries(user, opts)
-      }),
+      this.getPeersOrThrow(opts.peers).map(([_, peer]) => peer.searchEntries(user, opts)),
     )
     return results.flat()
+  }
+
+  async getEntry(
+    user: UserInterface,
+    peerId: string,
+    id: string,
+    kind?: EntryKindKeys,
+  ): Promise<ExternalModelInterface> {
+    return this.getPeerOrThrow(peerId).getEntry(user, id, kind)
   }
 }

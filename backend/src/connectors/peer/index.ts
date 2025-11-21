@@ -1,7 +1,7 @@
 import log from '../../services/log.js'
 import { FederationState, RemoteFederationConfig } from '../../types/types.js'
 import config from '../../utils/config.js'
-import { ConfigurationError } from '../../utils/error.js'
+import { BadReq, ConfigurationError } from '../../utils/error.js'
 import { BailoPeerConnector } from './bailo.js'
 import { BasePeerConnector } from './base.js'
 import { HuggingFaceHubConnector } from './huggingface.js'
@@ -78,6 +78,15 @@ export async function getPeerConnectors(cache = true): Promise<PeerConnectorWrap
   peerWrapper = new PeerConnectorWrapper(peers)
   await peerWrapper.init()
   return peerWrapper
+}
+
+export async function getPeerConnector(id: string): Promise<BasePeerConnector> {
+  const peers = (await getPeerConnectors()).peers
+  const peer = peers.get(id)
+  if (!peer) {
+    throw BadReq('Invalid peer ID provided', { id })
+  }
+  return peer
 }
 
 export default await getPeerConnectors()

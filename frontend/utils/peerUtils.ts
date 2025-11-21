@@ -17,7 +17,7 @@ export function getEntryUrl(peer: RemoteFederationConfig, entry: EntrySearchResu
         return `${baseUrl}/datasets/${entry.name}`
       }
       // Model uses the base path
-      return `${baseUrl}/${entry.name}`
+      return `model/${encodeURIComponent(entry.name)}`
 
     // Peer Bailo instances
     case 'bailo':

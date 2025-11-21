@@ -84,7 +84,8 @@ import { postSchema } from './routes/v2/schema/postSchema.js'
 import { postSchemaMigration } from './routes/v2/schema/postSchemaMigration.js'
 import { putSchemaMigration } from './routes/v2/schema/putSchemaMigration.js'
 import { getSpecification } from './routes/v2/specification.js'
-import { getPeerStatus } from './routes/v2/system/peers.js'
+import { getPeerStatus } from './routes/v2/system/peer.js'
+import { getPeersStatus } from './routes/v2/system/peers.js'
 import { getSystemStatus } from './routes/v2/system/status.js'
 import { getUiConfig } from './routes/v2/uiConfig/getUiConfig.js'
 import { deleteUserToken } from './routes/v2/user/deleteUserToken.js'
@@ -109,7 +110,8 @@ server.use('/api/v2/docs', swaggerUi.serve, swaggerUi.setup(generateSwaggerSpec(
 server.get('/api/v1/registry_auth', ...getDockerRegistryAuth)
 
 server.get('/api/v2/system/status', ...getSystemStatus)
-server.get('/api/v2/system/peers', ...getPeerStatus)
+server.get('/api/v2/system/peers', ...getPeersStatus)
+server.get('/api/v2/system/peer/:peerId', ...getPeerStatus)
 
 server.post('/api/v2/models', ...postModel)
 server.get('/api/v2/models/search', ...getModelsSearch)

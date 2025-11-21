@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { AuditInfo } from '../../../connectors/audit/Base.js'
 import audit from '../../../connectors/audit/index.js'
+import { getPeerConnector } from '../../../connectors/peer/index.js'
 import { EntryKind, EntryKindKeys, ModelInterface } from '../../../models/Model.js'
 import { getModelById } from '../../../services/model.js'
 import { modelInterfaceSchema, registerPath } from '../../../services/specification.js'
@@ -14,6 +15,7 @@ export const getModelSchema = z.object({
   }),
   query: z.object({
     kind: z.string(z.nativeEnum(EntryKind)).optional(),
+    peerId: z.string().optional(),
   }),
 })
 
@@ -35,7 +37,7 @@ registerPath({
   },
 })
 
-interface GetModelResponse {
+export interface GetModelResponse {
   model: ModelInterface
 }
 
@@ -44,7 +46,16 @@ export const getModel = [
     req.audit = AuditInfo.ViewModel
     const { params, query } = parse(req, getModelSchema)
 
-    const model = await getModelById(req.user, params.modelId, query.kind as EntryKindKeys | undefined)
+    let model
+
+    const peerId = query.peerId
+
+    if (peerId) {
+      const peerConnector = await getPeerConnector(peerId)
+      model = await peerConnector.getEntry(req.user, params.modelId, query.kind as EntryKindKeys | undefined)
+    } else {
+      model = await getModelById(req.user, params.modelId, query.kind as EntryKindKeys | undefined)
+    }
 
     await audit.onViewModel(req, model)
 

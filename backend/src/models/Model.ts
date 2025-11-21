@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose'
+import { Optional } from 'utility-types'
 
 import { SoftDeleteDocument, softDeletionPlugin } from './plugins/softDeletePlugin.js'
 
@@ -77,6 +78,8 @@ export interface ModelInterface {
   createdAt: Date
   updatedAt: Date
 }
+
+export type ExternalModelInterface = Optional<ModelInterface>
 
 // The doc type includes all values in the plain interface, as well as all the
 // properties and functions that Mongoose provides.  If a function takes in an

@@ -21,6 +21,22 @@ export function useGetPeers() {
   }
 }
 
+export function useGetPeer(peerId: string) {
+  const { data, isLoading, error, mutate } = useSWRImmutable<
+    {
+      peer: PeerConfigStatus
+    },
+    ErrorInfo
+  >(`/api/v2/system/peer/${peerId}`, fetcher)
+
+  return {
+    mutatePeersConfig: mutate,
+    peer: data?.peer,
+    isPeersLoading: isLoading,
+    isPeersError: error,
+  }
+}
+
 export function useGetStatus() {
   const { data, isLoading, error, mutate } = useSWRImmutable<SystemStatus, ErrorInfo>('/api/v2/system/status', fetcher)
 

@@ -2,6 +2,8 @@ import { ClientRequest } from 'http'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BasePeerConnector } from '../../../src/connectors/peer/base.js'
+import { EntryKindKeys, ExternalModelInterface } from '../../../src/models/Model.js'
+import { UserInterface } from '../../../src/models/User.js'
 import { FederationState, RemoteFederationConfig, SystemStatus } from '../../../src/types/types.js'
 
 vi.mock('node-cache', () => {
@@ -46,6 +48,10 @@ class DummyConnector extends BasePeerConnector {
     return {
       models: [],
     }
+  }
+
+  async getEntry(_user: UserInterface, _id: string, _kind?: EntryKindKeys): Promise<ExternalModelInterface> {
+    return {}
   }
 }
 
