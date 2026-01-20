@@ -64,11 +64,6 @@ services:
       context: ./lib/modelscan_api
     volumes:
       - ./lib/modelscan_api/bailo_modelscan_api:/app/bailo_modelscan_api
-    healthcheck:
-      test: ['CMD-SHELL', 'curl --fail http://127.0.0.1:3311/info || exit 1']
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   nginx:
     image: nginxinc/nginx-unprivileged:1.28.0-alpine3.21-slim

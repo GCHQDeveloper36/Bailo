@@ -2,17 +2,17 @@
 
 ARG PYTHONPATH=/venv/lib/python3.12/site-packages
 
-FROM python:3.12.11-slim-bookworm AS build
+FROM python:3.12.12-slim-trixie AS build
 ARG PYTHONPATH
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+COPY requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
     python3 -m venv /venv && \
-    /venv/bin/pip install --upgrade pip setuptools wheel
-
-COPY requirements.txt /requirements.txt
-RUN --mount=type=cache,target=/root/.cache/pip /venv/bin/pip install -r /requirements.txt
+    /venv/bin/pip install --upgrade pip setuptools wheel && \
+    /venv/bin/pip install -r /requirements.txt && \
+    /venv/bin/pip uninstall -y pip setuptools wheel
 
 FROM ubuntu:24.04 AS base
 ARG PYTHONPATH
@@ -27,17 +27,21 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,t
     groupadd -g 65532 nonroot && \
     useradd nonroot -u 65532 -g 65532 -M && \
     apt-get update && \
-    apt-get install -y --no-install-recommends curl python3 && \
-    apt-get dist-upgrade -y
+    apt-get dist-upgrade -y && \
+    apt-get install -y --no-install-recommends curl python3.12 && \
+    update-alternatives --install /usr/local/bin/python3 python3 /usr/bin/python3.12 0
 
 WORKDIR /app
-CMD ["python3", "/venv/bin/fastapi", "run", "bailo_modelscan_api/main.py", "--port", "3311"]
+CMD ["/venv/bin/python", "/venv/bin/fastapi", "run", "bailo_modelscan_api/main.py", "--port", "3311"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=5 CMD ["curl", "--noproxy='*'", "--fail", "http://localhost:3311/info"] || exit 1
+EXPOSE 3311
+
 FROM base AS dev
 
 COPY --from=build /venv /venv
 # Ensure app dir exists before mounting
 RUN mkdir -p /app/bailo_modelscan_api
-CMD ["python3", "/venv/bin/fastapi", "dev", "bailo_modelscan_api/main.py", "--host", "0.0.0.0", "--port", "3311"]
+CMD ["/venv/bin/python", "/venv/bin/fastapi", "dev", "bailo_modelscan_api/main.py", "--host", "0.0.0.0", "--port", "3311"]
 
 FROM base AS prod
 
