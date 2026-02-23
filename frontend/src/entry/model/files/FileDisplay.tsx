@@ -236,16 +236,22 @@ export default function FileDisplay({
 
   const rerunFileScanButton = useMemo(() => {
     return (
-      <MenuItem hidden={!showMenuItems.rescanFile} onClick={handleRerunFileScanOnClick}>
-        <ListItemIcon>
-          <Refresh color='primary' fontSize='small' />
-        </ListItemIcon>
-        <ListItemText>Rerun File Scan</ListItemText>
-      </MenuItem>
+      scanners &&
+      scanners.length > 0 && (
+        <MenuItem hidden={!showMenuItems.rescanFile} onClick={handleRerunFileScanOnClick}>
+          <ListItemIcon>
+            <Refresh color='primary' fontSize='small' />
+          </ListItemIcon>
+          <ListItemText>Rerun File Scan</ListItemText>
+        </MenuItem>
+      )
     )
-  }, [handleRerunFileScanOnClick, showMenuItems.rescanFile])
+  }, [handleRerunFileScanOnClick, scanners, showMenuItems.rescanFile])
 
   const scanResultChip = useMemo(() => {
+    if (!scanners) {
+      return <></>
+    }
     if (!chipDisplay) {
       return <Skeleton variant='text' sx={{ fontSize: '1rem', width: '150px' }} />
     }
@@ -325,7 +331,7 @@ export default function FileDisplay({
         </Popover>
       </>
     )
-  }, [anchorElScan, chipDisplay, file, openScan])
+  }, [anchorElScan, chipDisplay, file.scanResults, openScan, scanners])
 
   const handleFileTagSelectorOnChange = async (newTags: string[]) => {
     setFileTagErrorMessage('')
