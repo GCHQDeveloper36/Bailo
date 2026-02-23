@@ -177,8 +177,6 @@ export default function NewRelease() {
     setLoading(false)
   }
 
-  useEffect(() => {}, [modelCardVersion])
-
   const error = MultipleErrorWrapper(`Unable to load release page`, {
     isModelError,
   })
