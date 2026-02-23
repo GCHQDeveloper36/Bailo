@@ -1,3 +1,9 @@
+/**
+ * Each Bailo instance is responsible for it's own authentication.
+ * User escelation validation here is kept to a minimum, and only runs
+ * if it is enabled in config.
+ */
+
 import { NextFunction, Request, Response } from 'express'
 
 import log from '../../services/log.js'
