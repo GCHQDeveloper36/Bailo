@@ -50,7 +50,7 @@ export default function NewRelease() {
   } = useGetEntry(modelId, EntryKind.MODEL)
 
   useEffect(() => {
-    if (model && modelCardVersion !== model.card.version) {
+    if (model && !modelCardVersion) {
       setModelCardVersion(model.card.version)
     }
   }, [model, setModelCardVersion, modelCardVersion])
@@ -176,6 +176,8 @@ export default function NewRelease() {
     }
     setLoading(false)
   }
+
+  useEffect(() => {}, [modelCardVersion])
 
   const error = MultipleErrorWrapper(`Unable to load release page`, {
     isModelError,
