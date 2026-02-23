@@ -82,10 +82,10 @@ Images can be built from their respective directories:
   backend$ docker build -t "backend:<tag>" --build-context python=../lib/python -f ./Dockerfile .
   ```
 
-- ModelScan:
+- ArtefactScan:
 
   ```console
-  lib/modelscan$ docker build -t "modelscan:<tag>" -f ./Dockerfile .
+  lib/artefactscan$ docker build -t "artefactscan:<tag>" -f ./Dockerfile .
   ```
 
 ## Certificate Generation
@@ -117,7 +117,7 @@ The registry requires a **JWKS (JSON Web Key Set)** file for token authenticatio
 
 ## Minimal `local.yaml` for OpenShift Development Environment
 
-> **Note:** ClamAV and ModelScan are optional.
+> **Note:** ClamAV and ArtefactScan are optional.
 
 ```yaml
 image:
@@ -125,8 +125,8 @@ image:
   frontendTag: tag
   backendRepository: 'image-registry-openshift-imagestreams'
   backendTag: tag
-  modelscanRepository: 'image-registry-openshift-imagestreams'
-  modelscanTag: tag
+  artefactscanRepository: 'image-registry-openshift-imagestreams'
+  artefactscanTag: tag
 
 route:
   enabled: true
@@ -142,12 +142,12 @@ mongodb:
 clamav:
   enabled: true
 
-modelscan:
+artefactscan:
   enabled: true
 
 connectors:
-  fileScanners:
-    kinds: ['clamAV', 'modelScan']
+  artefactScanners:
+    kinds: ['clamAV', 'artefactScan']
 
 openshift:
   namespace: project-name
@@ -176,7 +176,7 @@ The following steps outline a typical AWS EKS setup suitable for development:
 
 ## Minimal `local.yaml` for AWS EKS Development Environment
 
-> **Note:** ClamAV and ModelScan are optional.
+> **Note:** ClamAV and ArtefactScan are optional.
 
 ```yaml
 image:
@@ -184,8 +184,8 @@ image:
   frontendTag: tag
   backendRepository: 'container-registry'
   backendTag: tag
-  modelscanRepository: 'container-registry'
-  modelscanTag: tag
+  artefactscanRepository: 'container-registry'
+  artefactscanTag: tag
 
 ingress:
   enabled: true
@@ -228,12 +228,12 @@ backend:
 clamav:
   enabled: true
 
-modelscan:
+artefactscan:
   enabled: true
 
 connectors:
-  fileScanners:
-    kinds: ['clamAV', 'modelScan']
+  artefactScanners:
+    kinds: ['clamAV', 'artefactScan']
 
 ```
 
@@ -321,8 +321,8 @@ The following tables describe selected configuration options available in `value
 | `image.frontendTag` | Frontend image tag | `null` |
 | `image.backendRepository` | Backend image location | `null` |
 | `image.backendTag` | Backend image tag | `null` |
-| `image.modelscanRepository` | Modelscan image location | `null` |
-| `image.modelscanTag` | Modelscan image tag | `null` |
+| `image.artefactscanRepository` | Artefactscan image location | `null` |
+| `image.artefactscanTag` | Artefactscan image tag | `null` |
 | `image.pullPolicy` | <https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy> | `IfNotPresent` |
 
 ### Pod Parameters
@@ -399,7 +399,7 @@ The following tables describe selected configuration options available in `value
 | `mail.enabled` | Using image marlonb/mailcrab:latest | `true` |
 | `registry.enabled` | Using image registry:3.0.0. Must use registry:3.0.0 if registry.serviceAccount is defined | `true` |
 | `clamav.enabled` | Optional. Using image clamav/clamav:1.4.2_base | `false` |
-| `modelscan.enabled` | Optional. Image defined in image.modelscanRepository | `false` |
+| `artefactscan.enabled` | Optional. Image defined in image.artefactscanRepository | `false` |
 
 ### Bailo Instance Settings
 
@@ -432,10 +432,10 @@ The following tables describe selected configuration options available in `value
 | `connectors.authentication.kind` | Name of the connector to be used for authentication | `silly` |
 | `connectors.authorisation.kind` | Name of the connector to be used for authorisation | `basic` |
 | `connectors.audit.kind` | Name of the connector to be used for auditing | `silly` |
-| `connectors.fileScanners.kinds` | A list of the file scanner names to enable. See local.yaml example above | `[]` |
-| `connectors.fileScanners.retryDelayInMinutes` | Number of minutes between scans on a given file | `60` |
-| `connectors.fileScanners.maxInitRetries` | Number of times the microservice is attempted to be reached before failing at startup | `5` |
-| `connectors.fileScanners.initRetryDelay` | Delay between successive microservice pings in milliseconds | `5000` |
+| `connectors.artefactScanners.kinds` | A list of the file scanner names to enable. See local.yaml example above | `[]` |
+| `connectors.artefactScanners.retryDelayInMinutes` | Number of minutes between scans on a given file | `60` |
+| `connectors.artefactScanners.maxInitRetries` | Number of times the microservice is attempted to be reached before failing at startup | `5` |
+| `connectors.artefactScanners.initRetryDelay` | Delay between successive microservice pings in milliseconds | `5000` |
 | `instrumentation.enabled` | Enable OpenTelemetry instrumentation | `false` |
 | `instrumentation.debug` | Enable instrumentation debugging | `false` |
 | `modelMirror.import.enabled` | Enable creation of mirrored models | `false` |

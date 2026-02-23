@@ -185,14 +185,14 @@ module.exports = {
     },
   },
 
-  avScanning: {
+  artefactScanning: {
     clamdscan: {
       concurrency: 2,
       host: '127.0.0.1',
       port: 3310,
     },
 
-    modelscan: {
+    artefactscan: {
       concurrency: 2,
       protocol: 'http',
       host: '127.0.0.1',
@@ -277,7 +277,7 @@ module.exports = {
       kind: 'silly',
     },
 
-    fileScanners: {
+    artefactScanners: {
       kinds: [],
       retryDelayInMinutes: 60,
       maxInitRetries: 5,
