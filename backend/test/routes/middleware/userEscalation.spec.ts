@@ -30,6 +30,44 @@ describe('middleware > userEscalation', () => {
       },
     })
   })
+  test('escalateUser > should not escalate when escalation is not enabled', async () => {
+    const next = vi.fn()
+    vi.spyOn(config, 'federation', 'get').mockReturnValue({
+      id: 'localBailo',
+      state: 'enabled',
+      isEscalationEnabled: false,
+      peers: {
+        bailoWales: {
+          state: 'enabled',
+          baseUrl: 'http://welsh-bailo:8080',
+          label: 'Bailo Wales Instance',
+          kind: 'bailo',
+          cache: {
+            query: 60,
+          },
+          allowedSystemUserIds: ['system-user-1'],
+        },
+      },
+    })
+
+    const request = {
+      header: vi.fn((name: string) => {
+        const headers: Record<string, string> = {
+          'x-user': 'app-user-1',
+          'x-bailo-id': 'bailoWales',
+        }
+        return headers[name]
+      }),
+      user: { dn: 'system-user-1' },
+    } as unknown as Request
+
+    escalateUser(request, {} as Response, next)
+
+    expect(request.user).toEqual({
+      dn: 'system-user-1',
+    })
+    expect(next).toBeCalled()
+  })
   test('escalateUser > should escalate when system user is authorised', async () => {
     const next = vi.fn()
 

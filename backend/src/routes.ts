@@ -106,7 +106,7 @@ for (const middlewareConf of middlewareConfigs) {
 }
 
 // Needs to be applied after authentication middleware as it requires the user details
-server.use('/api/v2/models', escalateUser)
+server.use('/api/v2/models/*', escalateUser)
 
 server.use('/api/v2/docs', swaggerUi.serve, swaggerUi.setup(generateSwaggerSpec()))
 
