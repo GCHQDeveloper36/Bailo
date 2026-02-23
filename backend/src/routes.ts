@@ -6,8 +6,6 @@ import { fileURLToPath } from 'url'
 
 import authentication from './connectors/authentication/index.js'
 import { expressErrorHandler } from './routes/middleware/expressErrorHandler.js'
-import { expressLogger } from './routes/middleware/expressLogger.js'
-import { requestId } from './routes/middleware/requestId.js'
 import { escalateUser } from './routes/middleware/userEscalation.js'
 import { getDockerRegistryAuth } from './routes/v1/registryAuth.js'
 import { getArtefactScanningInfo } from './routes/v2/artefactScanning/getArtefactScanningInfo.js'
