@@ -35,5 +35,8 @@ docs/backenddocsvenv
 **/*.py[cod]
 **$py.class
 
+# Tests
+test
+
 # Extras
 README.md
