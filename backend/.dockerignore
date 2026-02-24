@@ -24,6 +24,11 @@ node_modules/
 
 # build / generate output
 dist
+docs/_build
+docs/python-docs
+
+# Python venv
+docs/backenddocsvenv
 
 # Byte-compiled / optimized / DLL files
 **/__pycache__/
