@@ -249,9 +249,6 @@ export default function FileDisplay({
   }, [handleRerunFileScanOnClick, scanners, showMenuItems.rescanFile])
 
   const scanResultChip = useMemo(() => {
-    if (!scanners) {
-      return <></>
-    }
     if (!chipDisplay) {
       return <Skeleton variant='text' sx={{ fontSize: '1rem', width: '150px' }} />
     }
@@ -331,7 +328,7 @@ export default function FileDisplay({
         </Popover>
       </>
     )
-  }, [anchorElScan, chipDisplay, file.scanResults, openScan, scanners])
+  }, [anchorElScan, chipDisplay, file.scanResults, openScan])
 
   const handleFileTagSelectorOnChange = async (newTags: string[]) => {
     setFileTagErrorMessage('')
