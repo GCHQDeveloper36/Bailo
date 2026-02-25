@@ -1,0 +1,40 @@
+import DocsWrapper from 'src/docs/DocsWrapper'
+import Box from '@mui/material/Box'
+import Image from 'next/legacy/image'
+
+import mirrorCreateImage from 'public/docs/mirror-create.png'
+import mirrorCreateFormImage from 'public/docs/mirror-create-form.png'
+import mirrorSettingsFormImage from 'public/docs/mirror-settings-form.png'
+import tokens from 'public/docs/bailo_tokens.png'
+
+# Creating a mirrored model
+
+## What are Mirrored Models
+
+Model mirroring is a system that allows users to make a copy of a model that can be used either within a single instance
+of Bailo, or in another instance that is hosted by the same organisation.
+
+In order to maintain a source of truth, users are unable to change the the source content of the model as it is a
+read-only state. There is the option to add additional information inside the mirrored model, however.
+
+## How to create a Mirrored Model
+
+If model mirroring is enabled, users will be able to select create a mirrored model on the same model creation page:
+
+<Box sx={{ maxWidth: '75%', margin: 'auto' }}>
+  <Image alt='access request schema selection' src={mirrorCreateImage} />
+</Box>
+
+After selecting "Create Mirrored Model", there will be an additional input for the source model ID:
+
+<Box sx={{ maxWidth: '75%', margin: 'auto' }}>
+  <Image alt='access request schema selection' src={mirrorCreateFormImage} />
+</Box>
+
+After the mirrored model has been created, you will need to request a mirror inside the source model's settings:
+
+<Box sx={{ maxWidth: '75%', margin: 'auto' }}>
+  <Image alt='access request schema selection' src={mirrorSettingsFormImage} />
+</Box>
+
+export default ({ children }) => <DocsWrapper>{children}</DocsWrapper>
