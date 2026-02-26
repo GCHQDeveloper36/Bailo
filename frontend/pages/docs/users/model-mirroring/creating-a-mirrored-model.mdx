@@ -9,32 +9,49 @@ import tokens from 'public/docs/bailo_tokens.png'
 
 # Creating a mirrored model
 
-## What are Mirrored Models
+## What is model mirroring?
 
-Model mirroring is a feature that allows you to make a copy of a model that can be synchronised with an external source,
-in a read-only state. of Bailo, or in another instance that is hosted by the same organisation.
+Model mirroring allows you to create a read-only copy of an existing model that is synchronised from an external source.
+The source model may exist:
 
-order to maintain a source of truth, you are unable to change the content of the mirrored model card as it is in a
-read-only state. There is the option to add additional information inside the mirrored model card.
+- In another Bailo instance owned by the same organisation, or
+- In an external system that supports Bailo model exports
+
+The mirrored model uses the source model as the single source of truth. Core model information is kept in sync and
+cannot be edited locally. This ensures consistency while still allowing controlled reuse of model metadata. You may
+optionally add additional local context to a mirrored model without modifying the source model.
 
 ## How to create a Mirrored Model
 
-If model mirroring is enabled, you will be able to create a mirrored model on the model creation page:
+If model mirroring is enabled for your instance, you will be able to create a mirrored model on the model creation page:
 
 <Box sx={{ maxWidth: '75%', margin: 'auto' }}>
   <Image alt='access request schema selection' src={mirrorCreateImage} />
 </Box>
 
-After creating a mirrored model, copy the ID from the source model into the `Source Model ID` field:
+1. Select **Create mirrored model**
+2. Provide the basic model details as prompted
+3. Enter the **Source Model ID** of the model you want to mirror
 
 <Box sx={{ maxWidth: '75%', margin: 'auto' }}>
   <Image alt='access request schema selection' src={mirrorCreateFormImage} />
 </Box>
 
-After the mirrored model has been created, you will need to export the model using the source model's settings:
+The Source Model ID must exactly match the ID of the source model. This is used to establish the synchronisation link.
+
+## Exporting the source model
+
+After creating the mirrored model, the source model must be exported so that its content can be synchronised. From the
+source model:
+
+1. Open the model settings
+2. Configure export options as required
+3. Export the model
 
 <Box sx={{ maxWidth: '75%', margin: 'auto' }}>
   <Image alt='access request schema selection' src={mirrorSettingsFormImage} />
 </Box>
+
+Once exported, the mirrored model will be populated with the source model's data and kept in sync on subsequent exports.
 
 export default ({ children }) => <DocsWrapper>{children}</DocsWrapper>
