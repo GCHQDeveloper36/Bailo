@@ -49,7 +49,7 @@ function textActions(actionsList: actions[]) {
 }
 
 async function emailHtml(title, reviewMetadata, reviewActions) {
-  const email = await mjml2html(
+  const email = mjml2html(
     wrapper(`
     <mj-section padding-bottom="5px" css-class='gradient-bg' padding-bottom="5px">
       <mj-column width="100%">

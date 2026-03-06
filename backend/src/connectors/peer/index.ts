@@ -80,4 +80,4 @@ export async function getPeerConnectors(cache = true): Promise<PeerConnectorWrap
   return peerWrapper
 }
 
-export default await getPeerConnectors()
+export default getPeerConnectors()

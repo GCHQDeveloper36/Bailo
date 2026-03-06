@@ -11,9 +11,15 @@ import config, { TransportOption } from '../../utils/config.js'
 import { toEntity } from '../../utils/entity.js'
 import { sanitiseEmail } from '../../utils/smtp.js'
 import log from '../log.js'
-import { buildEmail, EmailContent } from './emailBuilder.js'
+import { /*buildEmail,*/ EmailContent } from './emailBuilder.js'
 
-const transporter = await generateTransporter(config.smtp.transporter)
+const emptyContent: EmailContent = {
+  html: '',
+  subject: '',
+  text: '',
+}
+
+let transporter: undefined | nodemailer.Transporter = undefined
 
 /**
  * Generates a Node Mailer Transporter.
@@ -63,25 +69,25 @@ export async function requestReviewForRelease(entity: string, review: ReviewDoc,
     return
   }
 
-  const emailContent = buildEmail(
-    `Release ${release.semver} for model ${release.modelId} is ready for your review`,
-    [
-      { title: 'Model ID', data: release.modelId },
-      { title: 'Semver', data: release.semver },
-      { title: 'Your Role', data: review.role.toUpperCase() },
-      {
-        title: 'Created By',
-        data: (await authentication.getUserInformation(toEntity('user', release.createdBy))).name || release.createdBy,
-      },
-    ],
-    [
-      { name: 'Open Release', url: getReleaseUrl(release) },
-      { name: 'See Reviews', url: `${appBaseUrl}/review` },
-    ],
-    true,
-  )
+  // const emailContent = buildEmail(
+  //   `Release ${release.semver} for model ${release.modelId} is ready for your review`,
+  //   [
+  //     { title: 'Model ID', data: release.modelId },
+  //     { title: 'Semver', data: release.semver },
+  //     { title: 'Your Role', data: review.role.toUpperCase() },
+  //     {
+  //       title: 'Created By',
+  //       data: (await authentication.getUserInformation(toEntity('user', release.createdBy))).name || release.createdBy,
+  //     },
+  //   ],
+  //   [
+  //     { name: 'Open Release', url: getReleaseUrl(release) },
+  //     { name: 'See Reviews', url: `${appBaseUrl}/review` },
+  //   ],
+  //   true,
+  // )
 
-  await dispatchEmail(entity, await emailContent)
+  await dispatchEmail(entity, emptyContent)
 }
 
 const requestingEntitiesText = (value: number) => {
@@ -98,29 +104,29 @@ export async function requestReviewForAccessRequest(
     return
   }
 
-  const emailContent = buildEmail(
-    `${requestingEntitiesText(accessRequest.metadata.overview.entities.length)} requesting access to model ${accessRequest.modelId}`,
-    [
-      { title: 'Model ID', data: accessRequest.modelId },
-      { title: 'Your Role', data: review.role.toUpperCase() },
-      {
-        title: 'Created By',
-        data:
-          (await authentication.getUserInformation(toEntity('user', accessRequest.createdBy))).name ||
-          accessRequest.createdBy,
-      },
-    ],
-    [
-      {
-        name: 'Open Access Request',
-        url: getAccessRequestUrl(accessRequest),
-      },
-      { name: 'See Reviews', url: `${appBaseUrl}/review` },
-    ],
-    true,
-  )
+  // const emailContent = buildEmail(
+  //   `${requestingEntitiesText(accessRequest.metadata.overview.entities.length)} requesting access to model ${accessRequest.modelId}`,
+  //   [
+  //     { title: 'Model ID', data: accessRequest.modelId },
+  //     { title: 'Your Role', data: review.role.toUpperCase() },
+  //     {
+  //       title: 'Created By',
+  //       data:
+  //         (await authentication.getUserInformation(toEntity('user', accessRequest.createdBy))).name ||
+  //         accessRequest.createdBy,
+  //     },
+  //   ],
+  //   [
+  //     {
+  //       name: 'Open Access Request',
+  //       url: getAccessRequestUrl(accessRequest),
+  //     },
+  //     { name: 'See Reviews', url: `${appBaseUrl}/review` },
+  //   ],
+  //   true,
+  // )
 
-  await dispatchEmail(entity, await emailContent)
+  await dispatchEmail(entity, emptyContent)
 }
 
 export async function notifyReviewResponseForRelease(reviewResponse: ResponseInterface, release: ReleaseDoc) {
@@ -144,21 +150,21 @@ export async function notifyReviewResponseForRelease(reviewResponse: ResponseInt
     return
   }
 
-  const emailContent = buildEmail(
-    `Release ${release.semver} has been reviewed by ${
-      (await authentication.getUserInformation(reviewResponse.entity)).name
-    }`,
-    [
-      { title: 'Model ID', data: release.modelId },
-      { title: 'Reviewer Role', data: reviewResponse.role.toUpperCase() },
-      { title: 'Decision', data: reviewResponse.decision.replace(/_/g, ' ') },
-    ],
-    [
-      { name: 'Open Release', url: getReleaseUrl(release) },
-      { name: 'See Reviews', url: `${appBaseUrl}/review` },
-    ],
-  )
-  await dispatchEmail(toEntity('user', release.createdBy), await emailContent)
+  // const emailContent = buildEmail(
+  //   `Release ${release.semver} has been reviewed by ${
+  //     (await authentication.getUserInformation(reviewResponse.entity)).name
+  //   }`,
+  //   [
+  //     { title: 'Model ID', data: release.modelId },
+  //     { title: 'Reviewer Role', data: reviewResponse.role.toUpperCase() },
+  //     { title: 'Decision', data: reviewResponse.decision.replace(/_/g, ' ') },
+  //   ],
+  //   [
+  //     { name: 'Open Release', url: getReleaseUrl(release) },
+  //     { name: 'See Reviews', url: `${appBaseUrl}/review` },
+  //   ],
+  // )
+  await dispatchEmail(toEntity('user', release.createdBy), emptyContent)
 }
 
 export async function notifyReviewResponseForAccess(
@@ -184,24 +190,27 @@ export async function notifyReviewResponseForAccess(
     log.info('response decision not found')
     return
   }
-  const emailContent = buildEmail(
-    `Access request for model ${accessRequest.modelId} has been reviewed by ${
-      (await authentication.getUserInformation(reviewResponse.entity)).name
-    }`,
-    [
-      { title: 'Model ID', data: accessRequest.modelId },
-      { title: 'Reviewer Role', data: reviewResponse.role.toUpperCase() },
-      { title: 'Decision', data: reviewResponse.decision.replace(/_/g, ' ') },
-    ],
-    [
-      { name: 'Open Access Request', url: getAccessRequestUrl(accessRequest) },
-      { name: 'See Reviews', url: `${appBaseUrl}/review` },
-    ],
-  )
-  await dispatchEmail(toEntity('user', accessRequest.createdBy), await emailContent)
+  // const emailContent = buildEmail(
+  //   `Access request for model ${accessRequest.modelId} has been reviewed by ${
+  //     (await authentication.getUserInformation(reviewResponse.entity)).name
+  //   }`,
+  //   [
+  //     { title: 'Model ID', data: accessRequest.modelId },
+  //     { title: 'Reviewer Role', data: reviewResponse.role.toUpperCase() },
+  //     { title: 'Decision', data: reviewResponse.decision.replace(/_/g, ' ') },
+  //   ],
+  //   [
+  //     { name: 'Open Access Request', url: getAccessRequestUrl(accessRequest) },
+  //     { name: 'See Reviews', url: `${appBaseUrl}/review` },
+  //   ],
+  // )
+  await dispatchEmail(toEntity('user', accessRequest.createdBy), emptyContent)
 }
 
 async function sendEmail(email: Mail.Options) {
+  if (!transporter) {
+    transporter = await generateTransporter(config.smtp.transporter)
+  }
   try {
     const sanitisedEmail = sanitiseEmail({
       from: config.smtp.from,

@@ -2,7 +2,6 @@ import bodyParser from 'body-parser'
 import express from 'express'
 import path from 'path'
 import swaggerUi from 'swagger-ui-express'
-import { fileURLToPath } from 'url'
 
 import authentication from './connectors/authentication/index.js'
 import { expressErrorHandler } from './routes/middleware/expressErrorHandler.js'
@@ -244,8 +243,8 @@ server.put('/api/v2/review/role/:shortName', ...putReviewRole)
 server.get('/api/v2/models/tags', getPopularTags)
 
 // Python docs
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// const __filename = fileURLToPath(import.meta.url)
+// const __dirname = path.dirname(__filename)
 server.use('/docs/python', express.static(path.join(__dirname, '../python-docs/dirhtml')))
 
 server.use('/api/v2', expressErrorHandler)

@@ -6,22 +6,12 @@ import config from '../utils/config.js'
 
 const targets: pino.TransportTargetOptions<Record<string, any>>[] = []
 
-if (process.env.NODE_ENV !== 'production') {
-  targets.push({
-    level: config.log.level,
-    target: 'pino-pretty',
-    options: {
-      colorize: !process.env.NO_COLOR,
-    },
-  })
-} else {
-  // In production environments output plain JSON logs
-  targets.push({
-    level: config.log.level,
-    target: 'pino/file',
-    options: { destination: 1 },
-  })
-}
+// In production environments output plain JSON logs
+targets.push({
+  level: config.log.level,
+  target: 'pino/file',
+  options: { destination: 1 },
+})
 
 if (config.instrumentation.enabled) {
   targets.push({

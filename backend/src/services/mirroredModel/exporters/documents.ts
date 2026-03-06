@@ -60,8 +60,9 @@ export class DocumentsExporter extends BaseExporter {
           })
         }
       }
+      const scanWrap = await scanners
 
-      if (scanners.scannersInfo()) {
+      if (scanWrap.scannersInfo()) {
         const scanErrors: {
           missingScan: Array<{ name: string; id: string }>
           incompleteScan: Array<{ name: string; id: string }>

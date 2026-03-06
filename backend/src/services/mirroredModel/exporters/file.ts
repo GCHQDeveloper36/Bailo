@@ -24,7 +24,7 @@ export class FileExporter extends BaseExporter {
     return this.file
   }
 
-  protected _init() {
+  protected async _init() {
     if (this.file.size > config.modelMirror.export.maxSize) {
       throw BadReq('Requested export is too large.', {
         size: this.file.size,
@@ -32,7 +32,7 @@ export class FileExporter extends BaseExporter {
       })
     }
 
-    if (scanners.scannersInfo().scannerNames.length > 0) {
+    if ((await scanners).scannersInfo.length > 0) {
       if (!this.file.scanResults || this.file.scanResults.length === 0) {
         throw BadReq('The file is missing vulnerability scan(s).', { filename: this.file.name, fileId: this.file.id })
       } else if (this.file.scanResults.some((scanResult) => scanResult.state !== ArtefactScanState.Complete)) {

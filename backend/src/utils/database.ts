@@ -5,6 +5,8 @@ import { join } from 'path'
 
 import log from '../services/log.js'
 import { doesMigrationExist, markMigrationComplete } from '../services/migration.js'
+import { addDefaultReviewRoles } from '../services/review.js'
+import { addDefaultSchemas } from '../services/schema.js'
 import config from './config.js'
 
 export function getConnectionURI() {
@@ -25,6 +27,13 @@ export async function connectToMongoose() {
 
     await mongoose.connect(getConnectionURI())
     log.info('Connected to Mongoose')
+    runMigrations()
+
+    // lazily add default dynamic review roles
+    addDefaultReviewRoles()
+
+    // lazily add default schemas
+    await addDefaultSchemas()
   } catch (error) {
     log.error({ error }, 'Error')
     throw error

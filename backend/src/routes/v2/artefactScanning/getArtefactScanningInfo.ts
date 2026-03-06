@@ -8,6 +8,6 @@ interface GetArtefactScanningInfoResponse {
 
 export const getArtefactScanningInfo = [
   async (req: Request, res: Response<GetArtefactScanningInfoResponse>): Promise<void> => {
-    res.json({ scanners: scanners.scannersInfo().scannerNames })
+    res.json({ scanners: (await scanners).scannersInfo().scannerNames })
   },
 ]

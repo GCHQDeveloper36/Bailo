@@ -49,4 +49,4 @@ async function addArtefactScanners(cache = true): Promise<ArtefactScanningWrappe
   return scannerWrapper
 }
 
-export default await addArtefactScanners()
+export default addArtefactScanners()

@@ -5,14 +5,24 @@
   "scripts": {
     "start": "tsx src/index.ts",
     "dev": "nodemon",
-    "build": "tsc",
+    "build": "npm run build:clear && npm run build:ts && npm run build:esbuild && npm run build:post",
+    "build:clear": "rm -rf ./build/*",
+    "build:ts": "tsc",
+    "build:esbuild": "node ./esbuild.mjs",
+    "build:post": "npm run build:post:configs && npm run build:post:worker",
+    "build:post:configs": "mkdir -p build/config/ && cp config/default.json ./build/config/",
+    "build:post:worker": "mkdir -p build/lib/ && cp node_modules/pino/lib/worker.js build/lib/worker.js",
     "test": "vitest",
     "lint": "eslint . -c eslint.config.mjs '**/*.ts' --max-warnings=0",
     "style": "prettier --write .",
     "check-style": "prettier --check .",
     "script": "tsx src/scripts/runScript.ts",
     "certs": "mkdir -p certs && openssl genrsa -out certs/key.pem 2048 && openssl req -new -x509 -key certs/key.pem -out certs/cert.pem -config certs/san.cnf -extensions 'v3_req' -days 360 && tsx src/scripts/generateJWKS.ts",
-    "seed": "tsx src/seeds/index.ts"
+    "seed": "tsx src/seeds/index.ts",
+    "sea:prepare": "cp $(command -v node) build/app",
+    "sea:config": "node --experimental-sea-config sea-config.json",
+    "sea:inject": "npx postject build/app NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2",
+    "sea": "npm run build && npm run sea:prepare && npm run sea:config && npm run sea:inject"
   },
   "keywords": [],
   "author": "",
@@ -102,6 +112,8 @@
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.31.1",
     "@vitest/coverage-v8": "^4.0.18",
+    "esbuild": "^0.27.3",
+    "esbuild-plugin-tsc": "^0.5.0",
     "eslint": "^10.0.2",
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
@@ -114,6 +126,11 @@
     "vitest": "^4.0.14"
   },
   "overrides": {
-    "mv": "npm:dry-uninstall"
+    "mv": "npm:dry-uninstall",
+    "mjml": {
+      "mjml-core": {
+        "prettier": "npm:dry-uninstall"
+      }
+    }
   }
 }

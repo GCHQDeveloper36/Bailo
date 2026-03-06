@@ -299,8 +299,10 @@ export async function searchModels(
 
   const promises: Promise<any>[] = [processLocalModels]
 
+  const peerWrap = await peers
+
   if (opts.peers && opts.peers.length > 0) {
-    const remotePromise = peers.searchEntries(user, opts)
+    const remotePromise = peerWrap.searchEntries(user, opts)
 
     const processRemoteModels = remotePromise.then((remoteResponses) => {
       for (const response of remoteResponses.flat()) {

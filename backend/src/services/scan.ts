@@ -16,7 +16,8 @@ import { getModelById } from './model.js'
 //This file is purposely incomplete as further image scanning work is prequisite. It does not contain enough logic towards handling the scanning of images
 
 export async function scanFile(file: FileInterfaceDoc) {
-  const scannersInfo = scanners.scannersInfo()
+  const scanWrap = await scanners
+  const scannersInfo = scanWrap.scannersInfo()
   if (scannersInfo && scannersInfo.scannerNames.length > 0 && file.size > 0) {
     const resultsInprogress: ArtefactScanResult[] = scannersInfo.scannerNames.map((scannerName) => ({
       toolName: scannerName,
@@ -24,7 +25,7 @@ export async function scanFile(file: FileInterfaceDoc) {
       lastRunAt: new Date(),
     }))
     await updateFileWithResults(file._id, resultsInprogress)
-    const resultsArray = await scanners.startScans(file)
+    const resultsArray = await scanWrap.startScans(file)
     await updateFileWithResults(file._id, resultsArray)
   }
 
@@ -101,7 +102,8 @@ export async function rerunFileScan(user: UserInterface, modelId: string, fileId
   if (!auth.success) {
     throw Forbidden(auth.info, { userDn: user.dn })
   }
-  const scannersInfo = scanners.scannersInfo()
+  const scanWrap = await scanners
+  const scannersInfo = scanWrap.scannersInfo()
   if (scannersInfo && scannersInfo.scannerNames) {
     const resultsInprogress = scannersInfo.scannerNames.map((scannerName) => ({
       toolName: scannerName,
@@ -110,7 +112,7 @@ export async function rerunFileScan(user: UserInterface, modelId: string, fileId
     }))
     await updateFileWithResults(file._id, resultsInprogress)
 
-    const resultsArray = await scanners.startScans(file)
+    const resultsArray = await scanWrap.startScans(file)
     await updateFileWithResults(file._id, resultsArray)
   }
   return `Scan started for ${file.name}`
