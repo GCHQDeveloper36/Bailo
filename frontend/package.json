@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next-nginx-routes",
     "cy:open": "cypress open",
     "cy:run": "cypress run --spec \"cypress/e2e/bailo/**/*\"",
     "start": "next start",

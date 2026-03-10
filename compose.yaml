@@ -14,7 +14,6 @@ services:
     environment:
       - MONGODB_INITDB_ROOT_USERNAME=bailoadmin
       - MONGODB_INITDB_ROOT_PASSWORD=bailoadmin
-      - MONGODB_INITDB_REPL_SET_HOST=mongo
       - MONGODB_INITDB_DATABASE=bailo
     volumes:
       - mongoVolume:/data/db
@@ -128,11 +127,11 @@ services:
       - ./backend/config:/app/config
     depends_on:
       clamd:
-        condition: service_healthy
+        condition: service_started
       registry:
         condition: service_started
       artefactscan:
-        condition: service_healthy
+        condition: service_started
       minio:
         condition: service_started
       mongo:

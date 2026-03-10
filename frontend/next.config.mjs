@@ -20,7 +20,7 @@ const backend = process.env.BACKEND_SERVICE ?? defaultBackend
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
+  output: 'export',
   transpilePackages: ['nanoid', 'lodash-es'],
 
   modularizeImports: {

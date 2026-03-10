@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "overview": {
+      "title": "Overview",
+      "description": "Summary of the model functionality.",
+      "type": "object",
+      "properties": {
+        "rawCard": {
+          "title": "Original card",
+          "description": "The original card from Hugging Face",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}
