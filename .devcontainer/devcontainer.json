@@ -38,14 +38,8 @@
   "postCreateCommand": "npm install",
   "remoteUser": "user",
 
-  // Mount Docker socket from host
-  "mounts": ["source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"],
-
-  // Give permissions to use docker group
-  "runArgs": ["--group-add", "docker"],
-
   // Install docker + docker compose inside container
   "features": {
-    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   }
 }
